@@ -3,12 +3,13 @@ import { Suspense, useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useCart } from "../context/CartContext";
-
-const SHOP_NAME = "Taste N' RoLLs";
-const SHOP_ADDRESS = "Shop No. 168, Opp. Bus Stand Parking Gate, Sampla - Jhajjar Road, Near Bus Stand Sampla, 124501";
-const SHOP_PHONE = "949-949-8323";
-const SHOP_ENQUIRY = "870-850-9490";
-const SHOP_TAGLINE = "Eat Healthy. Be Healthy.";
+import {
+  SHOP_NAME,
+  SHOP_ADDRESS,
+  SHOP_PHONE,
+  SHOP_ENQUIRY,
+  SHOP_TAGLINE,
+} from "../data/shop";
 
 function ReceiptContent() {
   const params = useSearchParams();
@@ -267,99 +268,101 @@ function ReceiptContent() {
         </div>
       </div>
 
-      {/* Action Buttons — hidden in print */}
-      <div className="receipt-actions no-print">
-        {viewMode === "kitchen" ? (
-          <>
-            <button className="btn-kitchen" onClick={printKitchen} style={{ flex: 1 }}>
-              🍳 Print Kitchen
+      {/* Actions, grouped by what they are for rather than stacked in four
+          undifferentiated rows. Hidden in print. */}
+      <div className="action-panel no-print">
+        <div className="action-group">
+          <span className="action-group-label">Print</span>
+          <div className="action-row">
+            {viewMode === "kitchen" ? (
+              <>
+                <button className="btn-kitchen" onClick={printKitchen}>
+                  🍳 Print Kitchen
+                </button>
+                <button className="btn-primary" onClick={() => setViewMode("bill")}>
+                  🧾 Show Bill
+                </button>
+              </>
+            ) : (
+              <>
+                <button className="btn-primary" onClick={printBill}>
+                  🖨️ Print Bill
+                </button>
+                <button className="btn-kitchen" onClick={() => setViewMode("kitchen")}>
+                  🍳 Kitchen Slip
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="action-group">
+          <span className="action-group-label">Send the bill</span>
+          <div className="action-row">
+            <button
+              className="btn-secondary"
+              onClick={() => {
+                const billUrl = `${window.location.origin}/bill/${orderId}`;
+                navigator.clipboard
+                  .writeText(billUrl)
+                  .then(() => {
+                    alert("Bill link copied! Share it with the customer.");
+                  })
+                  .catch(() => {
+                    prompt("Copy this link:", billUrl);
+                  });
+              }}
+            >
+              🔗 Copy Link
             </button>
-            <button className="btn-primary" onClick={() => setViewMode("bill")} style={{ flex: 1 }}>
-              🧾 Show Bill
+
+            {order?.customer?.phone && (
+              <button
+                className="btn-sms"
+                onClick={() => {
+                  const billUrl = `${window.location.origin}/bill/${orderId}`;
+                  let smsText = `Hi ${order.customer.name}, your order at ${SHOP_NAME} is confirmed! 🥡\n`;
+                  smsText += `Order ID: ${orderId}\n`;
+                  smsText += `Total: ₹${order.total}\n`;
+                  smsText += `View your bill: ${billUrl}\n`;
+                  smsText += `Thank you! Visit again 🙏`;
+
+                  let cleanPhone = order.customer.phone.replace(/\D/g, "");
+                  if (cleanPhone.startsWith("0")) cleanPhone = cleanPhone.slice(1);
+                  if (!cleanPhone.startsWith("91") && cleanPhone.length === 10) cleanPhone = "91" + cleanPhone;
+
+                  window.open(`sms:+${cleanPhone}?body=${encodeURIComponent(smsText)}`, "_self");
+                }}
+              >
+                💬 SMS
+              </button>
+            )}
+
+            {order?.customer?.phone && (
+              <button className="btn-whatsapp" onClick={() => sendWhatsApp(order.customer.phone)}>
+                📲 WhatsApp
+              </button>
+            )}
+
+            {ownerPhone && (
+              <button className="btn-whatsapp owner" onClick={() => sendWhatsApp(ownerPhone)}>
+                📲 To Owner
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="action-group">
+          <span className="action-group-label">Next</span>
+          <div className="action-row">
+            <button className="btn-edit-order" onClick={handleEditOrder}>
+              ✏️ Edit Order
             </button>
-          </>
-        ) : (
-          <>
-            <button className="btn-primary" onClick={printBill} style={{ flex: 1 }}>
-              🖨️ Print Bill
-            </button>
-            <button className="btn-kitchen" onClick={() => setViewMode("kitchen")} style={{ flex: 1 }}>
-              🍳 Kitchen Slip
-            </button>
-          </>
-        )}
-      </div>
-
-      <div className="receipt-actions no-print" style={{ marginTop: "0.5rem" }}>
-        <button className="btn-edit-order" onClick={handleEditOrder} style={{ flex: 1 }}>
-          ✏️ Edit Order
-        </button>
-
-        <button
-          className="btn-secondary"
-          onClick={() => {
-            const billUrl = `${window.location.origin}/bill/${orderId}`;
-            navigator.clipboard.writeText(billUrl).then(() => {
-              alert("Bill link copied! Share it with the customer.");
-            }).catch(() => {
-              prompt("Copy this link:", billUrl);
-            });
-          }}
-          style={{ flex: 1, justifyContent: "center" }}
-        >
-          🔗 Copy Bill Link
-        </button>
-      </div>
-
-      <div className="receipt-actions no-print" style={{ marginTop: "0.5rem" }}>
-        {order?.customer?.phone && (
-          <button
-            className="btn-sms"
-            onClick={() => {
-              const billUrl = `${window.location.origin}/bill/${orderId}`;
-              let smsText = `Hi ${order.customer.name}, your order at ${SHOP_NAME} is confirmed! 🥡\n`;
-              smsText += `Order ID: ${orderId}\n`;
-              smsText += `Total: ₹${order.total}\n`;
-              smsText += `View your bill: ${billUrl}\n`;
-              smsText += `Thank you! Visit again 🙏`;
-
-              let cleanPhone = order.customer.phone.replace(/\D/g, "");
-              if (cleanPhone.startsWith("0")) cleanPhone = cleanPhone.slice(1);
-              if (!cleanPhone.startsWith("91") && cleanPhone.length === 10) cleanPhone = "91" + cleanPhone;
-
-              window.open(`sms:+${cleanPhone}?body=${encodeURIComponent(smsText)}`, "_self");
-            }}
-            style={{ flex: 1 }}
-          >
-            💬 SMS to Customer
-          </button>
-        )}
-
-        {order?.customer?.phone && (
-          <button
-            className="btn-whatsapp"
-            onClick={() => sendWhatsApp(order.customer.phone)}
-            style={{ flex: 1 }}
-          >
-            📲 WhatsApp Customer
-          </button>
-        )}
-      </div>
-
-      <div className="receipt-actions no-print" style={{ marginTop: "0.5rem" }}>
-        {ownerPhone && (
-          <button
-            className="btn-whatsapp owner"
-            onClick={() => sendWhatsApp(ownerPhone)}
-            style={{ flex: 1 }}
-          >
-            📲 Send to Owner
-          </button>
-        )}
-
-        <Link href="/menu" className="btn-primary" style={{ flex: 1, justifyContent: "center" }}>
-          🍽️ New Order
-        </Link>
+            <Link href="/menu" className="btn-primary">
+              🍽️ New Order
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );

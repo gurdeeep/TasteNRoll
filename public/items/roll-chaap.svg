@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Soya chaap roll">
+  <defs>
+    <radialGradient id="rcbg" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#FBF1DE"/><stop offset="100%" stop-color="#E8D6B4"/>
+    </radialGradient>
+    <linearGradient id="rctort" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#EFC783"/><stop offset="55%" stop-color="#DEA95F"/><stop offset="100%" stop-color="#BE8540"/>
+    </linearGradient>
+    <linearGradient id="rcfoil" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#E8ECEF"/><stop offset="45%" stop-color="#C3CBD2"/><stop offset="100%" stop-color="#9AA5AE"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="94" fill="url(#rcbg)"/>
+  <ellipse cx="100" cy="168" rx="58" ry="10" fill="#B8823C" opacity=".18"/>
+  <g transform="translate(100 98) rotate(-28)">
+    <rect x="-31" y="-74" width="62" height="150" rx="30" fill="url(#rctort)"/>
+    <path d="M-31 -18c20 10 42 10 62 0" stroke="#B07B36" stroke-width="3" fill="none" opacity=".5" stroke-linecap="round"/>
+    <path d="M-31 8c20 10 42 10 62 0" stroke="#B07B36" stroke-width="3" fill="none" opacity=".4" stroke-linecap="round"/>
+    <path d="M-31 30h62v18a30 30 0 0 1-30 28 30 30 0 0 1-32-28z" fill="url(#rcfoil)"/>
+    <path d="M-27 38h54M-25 50h50" stroke="#7D8790" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
+    <ellipse cx="0" cy="-74" rx="31" ry="13" fill="#F6DBAE"/>
+    <ellipse cx="0" cy="-74" rx="24" ry="9" fill="#8E5C2A" opacity=".32"/>
+    <g>
+      <rect x="-20" y="-90" width="11" height="22" rx="5.5" fill="#E7C79A" stroke="#C29A63" stroke-width="1.5" transform="rotate(-12 -14 -79)"/>
+      <rect x="-4" y="-94" width="11" height="24" rx="5.5" fill="#EFD3A9" stroke="#C29A63" stroke-width="1.5" transform="rotate(6 1 -82)"/>
+      <rect x="10" y="-86" width="10" height="20" rx="5" fill="#E3C193" stroke="#C29A63" stroke-width="1.5" transform="rotate(18 15 -76)"/>
+      <path d="M-14 -79h11M0 -82h11" stroke="#B98F58" stroke-width="1.5" opacity=".7"/>
+      <circle cx="-8" cy="-68" r="4.2" fill="#6FA84E"/>
+      <circle cx="9" cy="-67" r="3.8" fill="#D8483A"/>
+    </g>
+  </g>
+  <g stroke="#9C6B2F" stroke-width="3" fill="none" opacity=".3" stroke-linecap="round">
+    <path d="M34 60c6-7 15-7 21-1"/><path d="M145 142c6-7 15-7 21-1"/>
+  </g>
+</svg>

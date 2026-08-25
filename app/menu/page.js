@@ -1,223 +1,227 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useMemo } from "react";
 import { menuData, accordionMenu, pizzaCategoryIds } from "../data/menu";
 import MenuItem from "../components/MenuItem";
+import DishArt from "../components/DishArt";
+
+// The rail on the left picks one category; the panel on the right shows that
+// category and nothing else.
+//
+// accordionMenu groups categories for display ("Rolls" holds four of them);
+// flattening it here gives the rail its groups and its order from one source.
+const GROUPS = accordionMenu.map((section) => ({
+  id: section.id,
+  name: section.name,
+  categoryIds: section.subSections
+    ? section.subSections.map((s) => s.id)
+    : section.categories || [],
+}));
+
+const CATEGORIES = GROUPS.flatMap((g) => g.categoryIds)
+  .map((id) => menuData.find((c) => c.id === id))
+  .filter(Boolean);
+
+const TOTAL_ITEMS = CATEGORIES.reduce((n, c) => n + c.items.length, 0);
 
 export default function MenuPage() {
-  const [openSection, setOpenSection] = useState(null);
-  const [activeSubTab, setActiveSubTab] = useState(null);
   const [vegOnly, setVegOnly] = useState(false);
-  const sectionRefs = useRef({});
+  const [query, setQuery] = useState("");
+  const [selectedId, setSelectedId] = useState(CATEGORIES[0]?.id);
+  const panelRef = useRef(null);
 
-  const toggleSection = (sectionId) => {
-    if (openSection === sectionId) {
-      setOpenSection(null);
-      setActiveSubTab(null);
-    } else {
-      setOpenSection(sectionId);
-      const section = accordionMenu.find((s) => s.id === sectionId);
-      if (section?.subSections) {
-        setActiveSubTab(section.subSections[0].id);
-      } else {
-        setActiveSubTab(null);
+  const search = query.trim().toLowerCase();
+
+  // Each category paired with the items that survive the current filters.
+  // Categories left with nothing drop out of the rail entirely.
+  const available = useMemo(() => {
+    return CATEGORIES.map((category) => {
+      let items = vegOnly ? category.items.filter((i) => i.veg) : category.items;
+      if (search) {
+        items = items.filter(
+          (i) =>
+            i.name.toLowerCase().includes(search) ||
+            category.name.toLowerCase().includes(search)
+        );
       }
-      // Scroll to section after a brief delay for DOM update
-      setTimeout(() => {
-        sectionRefs.current[sectionId]?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 100);
+      return { category, items };
+    }).filter((s) => s.items.length > 0);
+  }, [vegOnly, search]);
+
+  const availableIds = useMemo(
+    () => new Set(available.map((s) => s.category.id)),
+    [available]
+  );
+
+  // Derived, not stored: if a filter hides whatever was selected, fall back to
+  // the first category still showing. Keeping this out of state means the panel
+  // can never point at a category the rail no longer offers.
+  const openSection =
+    available.find((s) => s.category.id === selectedId) || available[0];
+
+  const countFor = (categoryId) =>
+    available.find((s) => s.category.id === categoryId).items.length;
+
+  const resultCount = available.reduce((sum, s) => sum + s.items.length, 0);
+
+  const selectCategory = (categoryId) => {
+    setSelectedId(categoryId);
+    // On mobile the rail sits above the panel, so bring the panel into view.
+    if (typeof window !== "undefined" && window.innerWidth <= 900) {
+      requestAnimationFrame(() => {
+        panelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
     }
   };
 
-  // Quick-nav: jump to a section from the sticky bar
-  const jumpToSection = (sectionId) => {
-    if (openSection !== sectionId) {
-      setOpenSection(sectionId);
-      const section = accordionMenu.find((s) => s.id === sectionId);
-      if (section?.subSections) {
-        setActiveSubTab(section.subSections[0].id);
-      } else {
-        setActiveSubTab(null);
-      }
-    }
-    setTimeout(() => {
-      sectionRefs.current[sectionId]?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 100);
-  };
-
-  // Scroll active nav pill into view
-  const navRef = useRef(null);
-  useEffect(() => {
-    if (openSection && navRef.current) {
-      const activeBtn = navRef.current.querySelector(".quick-nav-btn.active");
-      if (activeBtn) {
-        activeBtn.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
-      }
-    }
-  }, [openSection]);
-
-  const getCategoryData = (catId) => menuData.find((c) => c.id === catId);
-
-  const renderSectionContent = (section) => {
-    if (section.subSections) {
-      const activeCat = getCategoryData(activeSubTab);
-      const filtered = activeCat
-        ? vegOnly ? activeCat.items.filter((i) => i.veg) : activeCat.items
-        : [];
-
-      return (
-        <div className="accordion-body">
-          <div className="sub-tabs">
-            {section.subSections.map((sub) => (
-              <button
-                key={sub.id}
-                className={`sub-tab ${activeSubTab === sub.id ? "active" : ""}`}
-                onClick={() => setActiveSubTab(sub.id)}
-              >
-                {sub.name}
-              </button>
-            ))}
-          </div>
-          {activeCat && filtered.length > 0 && (
-            <div className="accordion-items-area">
-              <div className="sub-section-header">
-                <span className="cat-icon">{activeCat.icon}</span>
-                <h4>{activeCat.name}</h4>
-                <span className="item-count">{filtered.length} items</span>
-              </div>
-              <div className="menu-grid">
-                {filtered.map((item) => (
-                  <MenuItem
-                    key={item.id}
-                    item={item}
-                    categoryType={activeCat.type}
-                    labels={activeCat.labels}
-                    isPizza={false}
-                    addonEligible={!!activeCat.addonEligible}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-          {filtered.length === 0 && activeCat && (
-            <p className="no-items-msg">No items match the current filter.</p>
-          )}
-        </div>
-      );
-    }
-
-    return (
-      <div className="accordion-body">
-        {section.categories.map((catId) => {
-          const cat = getCategoryData(catId);
-          if (!cat) return null;
-          const filtered = vegOnly ? cat.items.filter((i) => i.veg) : cat.items;
-          if (filtered.length === 0) return null;
-
-          return (
-            <div key={cat.id} className="accordion-items-area">
-              {section.categories.length > 1 && (
-                <div className="sub-section-header">
-                  <span className="cat-icon">{cat.icon}</span>
-                  <h4>{cat.name}</h4>
-                  <span className="item-count">{filtered.length} items</span>
-                </div>
-              )}
-              <div className="menu-grid">
-                {filtered.map((item) => (
-                  <MenuItem
-                    key={item.id}
-                    item={item}
-                    categoryType={cat.type}
-                    labels={cat.labels}
-                    isPizza={pizzaCategoryIds.includes(cat.id)}
-                    addonEligible={!!cat.addonEligible}
-                  />
-                ))}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
+  const clearFilters = () => {
+    setQuery("");
+    setVegOnly(false);
   };
 
   return (
-    <div className="menu-page">
-      <div className="section-header" style={{ marginBottom: "0.75rem" }}>
+    <div className="page menu-page">
+      <header className="page-head">
+        <span className="section-eyebrow">Freshly made, all day</span>
         <h2>Our Menu</h2>
-        <p>Tap a category to get started</p>
-      </div>
+        <p>
+          {TOTAL_ITEMS} dishes across {GROUPS.length} sections
+        </p>
+      </header>
 
-      {/* Sticky Quick Navigation */}
-      <div className="quick-nav-wrapper" ref={navRef}>
-        <div className="quick-nav">
-          {/* Veg filter */}
-          <button
-            className={`quick-nav-btn veg-filter ${vegOnly ? "active" : ""}`}
-            onClick={() => setVegOnly(!vegOnly)}
-          >
-            <span className="veg-badge" style={{ width: 10, height: 10, borderWidth: 1 }}></span>
-            {vegOnly ? "All" : "Veg"}
-          </button>
-
-          <span className="quick-nav-divider" />
-
-          {accordionMenu.map((section) => (
-            <button
-              key={section.id}
-              className={`quick-nav-btn ${openSection === section.id ? "active" : ""}`}
-              onClick={() => jumpToSection(section.id)}
-            >
-              <span className="quick-nav-icon">{section.icon}</span>
-              {section.name}
+      {/* Search and veg filter change what the rail offers, so they sit above it */}
+      <div className="menu-toolbar">
+        <div className="menu-search">
+          <span className="menu-search-icon" aria-hidden="true">🔍</span>
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search for a dish…"
+            aria-label="Search the menu"
+          />
+          {query && (
+            <button className="menu-search-clear" onClick={() => setQuery("")} aria-label="Clear search">
+              ✕
             </button>
-          ))}
+          )}
         </div>
+        <button
+          className={`veg-toggle ${vegOnly ? "active" : ""}`}
+          onClick={() => setVegOnly(!vegOnly)}
+          aria-pressed={vegOnly}
+        >
+          <span className="veg-badge" aria-hidden="true"></span>
+          Veg only
+        </button>
       </div>
 
-      {/* Accordion Menu */}
-      <div className="accordion-menu">
-        {accordionMenu.map((section) => {
-          const isOpen = openSection === section.id;
-          // Calculate total items in this section
-          let sectionItemCount = 0;
-          if (section.subSections) {
-            section.subSections.forEach((sub) => {
-              const cat = getCategoryData(sub.id);
-              if (cat) sectionItemCount += cat.items.length;
-            });
-          } else if (section.categories) {
-            section.categories.forEach((catId) => {
-              const cat = getCategoryData(catId);
-              if (cat) sectionItemCount += cat.items.length;
-            });
-          }
-          return (
-            <div
-              key={section.id}
-              ref={(el) => (sectionRefs.current[section.id] = el)}
-              className={`accordion-section ${isOpen ? "open" : ""}`}
-            >
-              <button
-                className="accordion-header"
-                onClick={() => toggleSection(section.id)}
-              >
-                <div className="accordion-header-left">
-                  <span className="accordion-icon">{section.icon}</span>
-                  <span className="accordion-name">
-                    {section.name}
-                    <span className="accordion-item-count"> • {sectionItemCount}</span>
-                  </span>
-                </div>
-                <span className={`accordion-chevron ${isOpen ? "rotated" : ""}`}>
-                  ▾
-                </span>
-              </button>
-              {isOpen && renderSectionContent(section)}
+      {(search || vegOnly) && available.length > 0 && (
+        <p className="menu-result-count">
+          {resultCount} {resultCount === 1 ? "dish" : "dishes"}
+          {search ? ` matching “${query.trim()}”` : " on the veg menu"} in{" "}
+          {available.length} {available.length === 1 ? "section" : "sections"} — pick one on the left
+        </p>
+      )}
+
+      {available.length === 0 ? (
+        <div className="menu-empty">
+          <div className="menu-empty-icon" aria-hidden="true">🍽️</div>
+          <h3>Nothing matches that</h3>
+          <p>Try a different spelling, or clear the filters to see the full menu.</p>
+          <button className="btn-secondary" onClick={clearFilters}>
+            Clear filters
+          </button>
+        </div>
+      ) : (
+        <div className="menu-shell">
+          {/* Category rail — sidebar on desktop, scrolling chips on mobile */}
+          <nav className="menu-rail" aria-label="Menu categories">
+            <div className="menu-rail-inner">
+              {GROUPS.map((group) => {
+                const groupCategories = group.categoryIds
+                  .filter((id) => availableIds.has(id))
+                  .map((id) => CATEGORIES.find((c) => c.id === id));
+                if (groupCategories.length === 0) return null;
+
+                // A group holding one category needs no sub-list — the group
+                // name and the category name say the same thing.
+                if (groupCategories.length === 1) {
+                  const category = groupCategories[0];
+                  const isOpen = openSection.category.id === category.id;
+                  return (
+                    <button
+                      key={group.id}
+                      className={`rail-link ${isOpen ? "active" : ""}`}
+                      onClick={() => selectCategory(category.id)}
+                      aria-expanded={isOpen}
+                      aria-controls="menu-panel"
+                    >
+                      <DishArt categoryId={category.id} size={26} />
+                      <span className="rail-link-name">{group.name}</span>
+                      <span className="rail-link-count">{countFor(category.id)}</span>
+                    </button>
+                  );
+                }
+
+                return (
+                  <div className="rail-group" key={group.id}>
+                    <span className="rail-group-name">{group.name}</span>
+                    {groupCategories.map((category) => {
+                      const isOpen = openSection.category.id === category.id;
+                      return (
+                        <button
+                          key={category.id}
+                          className={`rail-link rail-link-sub ${isOpen ? "active" : ""}`}
+                          onClick={() => selectCategory(category.id)}
+                          aria-expanded={isOpen}
+                          aria-controls="menu-panel"
+                        >
+                          <DishArt categoryId={category.id} size={26} />
+                          <span className="rail-link-name">{category.name}</span>
+                          <span className="rail-link-count">{countFor(category.id)}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                );
+              })}
             </div>
-          );
-        })}
-      </div>
+          </nav>
+
+          {/* Only the selected category is rendered */}
+          <div className="menu-sections" id="menu-panel" ref={panelRef}>
+            <section
+              key={openSection.category.id}
+              className="menu-section is-open"
+              aria-labelledby="open-section-heading"
+            >
+              <div className="menu-section-head">
+                <DishArt categoryId={openSection.category.id} size={44} />
+                <div className="menu-section-title">
+                  <h3 id="open-section-heading">{openSection.category.name}</h3>
+                  {openSection.category.description && (
+                    <p>{openSection.category.description}</p>
+                  )}
+                </div>
+                <span className="item-count">{openSection.items.length} items</span>
+              </div>
+
+              <div className="menu-grid">
+                {openSection.items.map((item) => (
+                  <MenuItem
+                    key={item.id}
+                    item={item}
+                    categoryType={openSection.category.type}
+                    labels={openSection.category.labels}
+                    isPizza={pizzaCategoryIds.includes(openSection.category.id)}
+                    addonEligible={!!openSection.category.addonEligible}
+                  />
+                ))}
+              </div>
+            </section>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

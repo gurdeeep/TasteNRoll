@@ -116,11 +116,12 @@ export default function UnpaidPage() {
   const totalUnpaid = orders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
 
   return (
-    <div className="unpaid-page">
-      <div className="section-header" style={{ marginBottom: "1.5rem" }}>
-        <h2>⏳ Unpaid Orders</h2>
-        <p>Orders pending payment</p>
-      </div>
+    <div className="page page-narrow unpaid-page">
+      <header className="page-head page-head-left">
+        <span className="section-eyebrow">Running tabs</span>
+        <h2>Unpaid Orders</h2>
+        <p>Orders waiting to be settled</p>
+      </header>
 
       {orders.length > 0 && (
         <div className="unpaid-summary">
@@ -137,16 +138,14 @@ export default function UnpaidPage() {
       )}
 
       {loading ? (
-        <div style={{ textAlign: "center", padding: "4rem 0", color: "var(--text-muted)" }}>
-          Loading unpaid orders...
-        </div>
+        <div className="loading-state">Loading unpaid orders…</div>
       ) : orders.length === 0 ? (
-        <div className="unpaid-empty">
-          <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>✨</div>
-          <h3>All Clear!</h3>
-          <p>No unpaid orders — all bills are settled.</p>
-          <Link href="/menu" className="btn-primary" style={{ marginTop: "1rem", display: "inline-flex" }}>
-            🍽️ Take New Order
+        <div className="empty-state">
+          <div className="empty-state-icon" aria-hidden="true">✨</div>
+          <h2>All Clear</h2>
+          <p>No unpaid orders — every bill is settled.</p>
+          <Link href="/menu" className="btn-primary">
+            Take New Order
           </Link>
         </div>
       ) : (

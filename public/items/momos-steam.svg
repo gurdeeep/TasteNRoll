@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Steamed momos">
+  <defs>
+    <radialGradient id="msbg" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#FFF4E2"/><stop offset="100%" stop-color="#F4DCBA"/>
+    </radialGradient>
+    <linearGradient id="momo" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFDF7"/><stop offset="100%" stop-color="#EADFC6"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="94" fill="url(#msbg)"/>
+  <ellipse cx="100" cy="166" rx="56" ry="10" fill="#B8823C" opacity=".18"/>
+  <g stroke="#C9B189" stroke-width="3.5" fill="none" opacity=".55" stroke-linecap="round">
+    <path d="M82 44c0-9 7-12 7-20"/><path d="M100 38c0-9 7-12 7-20"/><path d="M118 44c0-9 7-12 7-20"/>
+  </g>
+  <g fill="url(#momo)" stroke="#CBB78F" stroke-width="2.5">
+    <g transform="translate(64 120)">
+      <path d="M-26 12c0-18 12-30 26-30s26 12 26 30z"/>
+      <path d="M-22 6c4-14 10-22 18-22M-10 -14c6 4 10 12 12 20M2 -18c6 6 8 14 9 22" stroke="#CBB78F" stroke-width="2.5" fill="none"/>
+      <ellipse cx="0" cy="12" rx="26" ry="6" fill="#E2D4B7"/>
+    </g>
+    <g transform="translate(136 120)">
+      <path d="M-26 12c0-18 12-30 26-30s26 12 26 30z"/>
+      <path d="M-22 6c4-14 10-22 18-22M-10 -14c6 4 10 12 12 20M2 -18c6 6 8 14 9 22" stroke="#CBB78F" stroke-width="2.5" fill="none"/>
+      <ellipse cx="0" cy="12" rx="26" ry="6" fill="#E2D4B7"/>
+    </g>
+    <g transform="translate(100 96)">
+      <path d="M-30 14c0-21 14-34 30-34s30 13 30 34z"/>
+      <path d="M-25 8c5-16 12-25 21-25M-11 -17c7 5 11 14 14 23M4 -21c7 7 9 16 10 25" stroke="#CBB78F" stroke-width="2.5" fill="none"/>
+      <ellipse cx="0" cy="14" rx="30" ry="7" fill="#E2D4B7"/>
+    </g>
+  </g>
+  <path d="M40 148h120c0 12-27 20-60 20s-60-8-60-20z" fill="#D94F3D" opacity=".2"/>
+  <circle cx="164" cy="60" r="14" fill="#C0392B" opacity=".85"/>
+  <path d="M158 60h12M164 54v12" stroke="#FFF" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+</svg>

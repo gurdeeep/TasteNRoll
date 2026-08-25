@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Milkshake">
+  <defs>
+    <radialGradient id="skbg" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#FDEFF3"/><stop offset="100%" stop-color="#F6D7E0"/>
+    </radialGradient>
+    <linearGradient id="skliq" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FBD3DF"/><stop offset="100%" stop-color="#E58BA6"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="94" fill="url(#skbg)"/>
+  <ellipse cx="100" cy="176" rx="40" ry="8" fill="#B85F7C" opacity=".18"/>
+  <path d="M70 60h60l-10 104a12 12 0 0 1-12 11H92a12 12 0 0 1-12-11z" fill="#FBEFF3"/>
+  <path d="M72 76h56l-9 88a11 11 0 0 1-11 10H92a11 11 0 0 1-11-10z" fill="url(#skliq)"/>
+  <g fill="#FFFFFF" opacity=".45">
+    <circle cx="90" cy="110" r="5"/><circle cx="110" cy="132" r="4"/><circle cx="96" cy="150" r="3"/>
+  </g>
+  <path d="M70 60h60l-1 14H71z" fill="#F3DCE3"/>
+  <path d="M62 60c0-16 16-26 38-26s38 10 38 26c-8-8-18-4-26-9-7 8-18 2-26 8-8-6-16-6-24 1z" fill="#FFF8FA"/>
+  <path d="M62 60c0-16 16-26 38-26s38 10 38 26" fill="none" stroke="#F0DDE3" stroke-width="3"/>
+  <circle cx="100" cy="30" r="9" fill="#D9453F"/>
+  <path d="M100 21c2-8 10-10 14-6-4 4-8 4-10 8z" fill="#5C8C46"/>
+  <rect x="118" y="10" width="8" height="66" rx="4" fill="#E2503F" transform="rotate(14 122 43)"/>
+  <g fill="#8B5A2B" opacity=".5">
+    <path d="M74 74c14 6 38 6 52 0-6 8-16 12-26 12s-20-4-26-12z"/>
+  </g>
+</svg>

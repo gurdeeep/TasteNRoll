@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Fried momos">
+  <defs>
+    <radialGradient id="mfbg" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#FFEBCC"/><stop offset="100%" stop-color="#F3D19C"/>
+    </radialGradient>
+    <linearGradient id="momof" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F3CE87"/><stop offset="100%" stop-color="#D89F4C"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="94" fill="url(#mfbg)"/>
+  <ellipse cx="100" cy="166" rx="56" ry="10" fill="#B8823C" opacity=".18"/>
+  <g fill="url(#momof)" stroke="#B9812F" stroke-width="2.5">
+    <g transform="translate(64 122)">
+      <path d="M-26 12c0-18 12-30 26-30s26 12 26 30z"/>
+      <path d="M-22 6c4-14 10-22 18-22M-10 -14c6 4 10 12 12 20M2 -18c6 6 8 14 9 22" stroke="#B9812F" stroke-width="2.5" fill="none"/>
+      <ellipse cx="0" cy="12" rx="26" ry="6" fill="#C68F3C"/>
+    </g>
+    <g transform="translate(136 122)">
+      <path d="M-26 12c0-18 12-30 26-30s26 12 26 30z"/>
+      <path d="M-22 6c4-14 10-22 18-22M-10 -14c6 4 10 12 12 20M2 -18c6 6 8 14 9 22" stroke="#B9812F" stroke-width="2.5" fill="none"/>
+      <ellipse cx="0" cy="12" rx="26" ry="6" fill="#C68F3C"/>
+    </g>
+    <g transform="translate(100 96)">
+      <path d="M-30 14c0-21 14-34 30-34s30 13 30 34z"/>
+      <path d="M-25 8c5-16 12-25 21-25M-11 -17c7 5 11 14 14 23M4 -21c7 7 9 16 10 25" stroke="#B9812F" stroke-width="2.5" fill="none"/>
+      <ellipse cx="0" cy="14" rx="30" ry="7" fill="#C68F3C"/>
+    </g>
+  </g>
+  <g fill="#A96F26" opacity=".45">
+    <circle cx="92" cy="86" r="2.4"/><circle cx="108" cy="92" r="2"/><circle cx="100" cy="76" r="1.8"/>
+    <circle cx="58" cy="114" r="2"/><circle cx="142" cy="116" r="2"/>
+  </g>
+  <path d="M40 150h120c0 12-27 20-60 20s-60-8-60-20z" fill="#C0392B" opacity=".25"/>
+  <g fill="#6FA84E" opacity=".7">
+    <path d="M36 58c8-8 19-8 26-1-9 8-19 8-26 1z"/>
+  </g>
+</svg>

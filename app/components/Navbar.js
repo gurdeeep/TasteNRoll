@@ -1,9 +1,19 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useCart } from "../context/CartContext";
 import { useTheme } from "../context/ThemeContext";
+
+// One list drives the desktop links and the mobile sheet, so the two can never
+// drift apart the way they had (Menu appeared in both, Dashboard in only one).
+const NAV_LINKS = [
+  { href: "/menu", label: "Menu", icon: "📋" },
+  { href: "/unpaid", label: "Unpaid", icon: "⏳", badge: "unpaid" },
+  { href: "/history", label: "History", icon: "📜" },
+  { href: "/dashboard", label: "Dashboard", icon: "📊" },
+];
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -12,7 +22,9 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [unpaidCount, setUnpaidCount] = useState(0);
 
-  useEffect(() => { setOpen(false); }, [pathname]);
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     const fetchUnpaid = async () => {
@@ -27,77 +39,91 @@ export default function Navbar() {
     return () => clearInterval(interval);
   }, [pathname]);
 
+  const badgeFor = (link) =>
+    link.badge === "unpaid" && unpaidCount > 0 ? unpaidCount : null;
+
   return (
     <nav className="navbar">
       <div className="navbar-inner">
-        {/* Logo */}
         <Link href="/" className="navbar-logo">
-          <span>🥡</span> Taste N' RoLLs
+          <Image
+            src="/brand/logo-mark.svg"
+            alt=""
+            width={28}
+            height={28}
+            aria-hidden="true"
+            priority
+          />
+          Taste N&apos; RoLLs
         </Link>
 
-        {/* Desktop-only links (hidden on mobile) */}
-        <div className="navbar-desktop-links">
-          <Link href="/menu" className={pathname === "/menu" ? "active" : ""}>
-            📋 Menu
-          </Link>
-          <Link href="/unpaid" className={`unpaid-nav-btn ${pathname === "/unpaid" ? "active" : ""}`}>
-            ⏳ Unpaid
-            {unpaidCount > 0 && <span className="unpaid-nav-badge">{unpaidCount}</span>}
-          </Link>
-          <Link href="/history" className={pathname === "/history" ? "active" : ""}>
-            📜 History
-          </Link>
-          <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
+        <div className="navbar-links">
+          {NAV_LINKS.map((link) => {
+            const badge = badgeFor(link);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`navbar-link ${pathname === link.href ? "active" : ""} ${
+                  badge ? "has-badge" : ""
+                }`}
+              >
+                <span aria-hidden="true">{link.icon}</span>
+                {link.label}
+                {badge && <span className="nav-badge">{badge}</span>}
+              </Link>
+            );
+          })}
+        </div>
+
+        <div className="navbar-right">
+          <button
+            className="theme-toggle"
+            onClick={toggleTheme}
+            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          >
             {theme === "dark" ? "☀️" : "🌙"}
           </button>
-        </div>
 
-        {/* Mobile-only quick links (visible only on phone) */}
-        <div className="navbar-mobile-quick">
-          <Link href="/menu" className={`nav-quick-btn ${pathname === "/menu" ? "active" : ""}`}>
-            📋
-          </Link>
-          <Link href="/history" className={`nav-quick-btn ${pathname === "/history" ? "active" : ""}`}>
-            📜
-          </Link>
-          <Link href="/unpaid" className={`nav-quick-btn unpaid-quick ${pathname === "/unpaid" ? "active" : ""}`}>
-            ⏳
-            {unpaidCount > 0 && <span className="unpaid-nav-badge">{unpaidCount}</span>}
-          </Link>
-        </div>
-
-        {/* Right side — Bill + Hamburger */}
-        <div className="navbar-right">
           <Link href="/cart" className="cart-btn">
-            🧾 Bill
-            {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
-            {totalItems > 0 && <span className="cart-price">₹{totalPrice}</span>}
+            🧾
+            <span className="cart-btn-label">Bill</span>
+            {totalItems > 0 && (
+              <>
+                <span className="cart-badge">{totalItems}</span>
+                <span className="cart-price">₹{totalPrice}</span>
+              </>
+            )}
           </Link>
-          <button className="menu-toggle" onClick={() => setOpen(!open)} aria-label="Toggle menu">
+
+          <button
+            className="menu-toggle"
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle navigation"
+            aria-expanded={open}
+          >
             {open ? "✕" : "☰"}
           </button>
         </div>
       </div>
 
-      {/* Dropdown */}
       {open && (
-        <div className="navbar-dropdown">
-          <Link href="/menu" className={pathname === "/menu" ? "active" : ""} onClick={() => setOpen(false)}>
-            📋 Menu
-          </Link>
-          <Link href="/unpaid" className={`navbar-dd-link ${pathname === "/unpaid" ? "active" : ""}`} onClick={() => setOpen(false)}>
-            ⏳ Unpaid
-            {unpaidCount > 0 && <span className="unpaid-nav-badge">{unpaidCount}</span>}
-          </Link>
-          <Link href="/history" className={pathname === "/history" ? "active" : ""} onClick={() => setOpen(false)}>
-            📜 Order History
-          </Link>
-          <Link href="/dashboard" className={pathname === "/dashboard" ? "active" : ""} onClick={() => setOpen(false)}>
-            📊 Dashboard
-          </Link>
-          <button className="navbar-dd-btn" onClick={() => { toggleTheme(); setOpen(false); }}>
-            {theme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode"}
-          </button>
+        <div className="navbar-sheet">
+          {NAV_LINKS.map((link) => {
+            const badge = badgeFor(link);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={pathname === link.href ? "active" : ""}
+                onClick={() => setOpen(false)}
+              >
+                <span aria-hidden="true">{link.icon}</span>
+                {link.label}
+                {badge && <span className="nav-badge">{badge}</span>}
+              </Link>
+            );
+          })}
         </div>
       )}
     </nav>

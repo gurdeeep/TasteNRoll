@@ -155,6 +155,7 @@ export const menuData = [
       { id: "cs2", name: "Honey Chilli Potato", half: 120, full: 170, veg: true },
       { id: "cs3", name: "Chilli Paneer (Dry)", half: 180, full: 260, veg: true },
       { id: "cs4", name: "Chilli Paneer (Gravy)", half: 200, full: 280, veg: true },
+      { id: "cs5", name: "KFC Style Veggie Spring Roll", half: null, full: 140, veg: true },
     ],
   },
   {
@@ -176,9 +177,21 @@ export const menuData = [
     type: "dual-label",
     labels: ["Veg", "Paneer"],
     items: [
-      { id: "mm1", name: "Steam Momos", price1: 90, price2: 100, veg: true },
+      { id: "mm1", name: "Steam Momos", price1: 90, price2: 110, veg: true },
       { id: "mm2", name: "Fried Momos", price1: 100, price2: 120, veg: true },
       { id: "mm3", name: "Kurkure Momos", price1: 120, price2: 140, veg: true },
+    ],
+  },
+  {
+    id: "cheese-mushroom-momos",
+    name: "Cheese & Mushroom Momos",
+    icon: "🥟",
+    description: "Cheese veggie & mushroom momos, 8 pieces a plate",
+    type: "dual-label",
+    labels: ["Cheese Veggie", "Mushroom"],
+    items: [
+      { id: "cmm1", name: "Steam Momos", price1: 130, price2: 130, veg: true },
+      { id: "cmm2", name: "Kurkure Momos", price1: 160, price2: 160, veg: true },
     ],
   },
   {
@@ -324,8 +337,8 @@ export const generalAddOns = [
 // IDs of pizza categories (used to trigger pizza add-on popup)
 export const pizzaCategoryIds = ["basic-pizza", "amazing-pizza", "combo-pizza"];
 
-// Accordion menu structure — defines the order and grouping
-// "Rolls" is special: it has sub-sections (sub-tabs)
+// Menu structure — defines the order categories appear in and how they group.
+// "Rolls" is special: it holds several categories under one heading.
 export const accordionMenu = [
   {
     id: "rolls",
@@ -345,7 +358,7 @@ export const accordionMenu = [
   { id: "maggi", name: "Maggi", icon: "🍜", categories: ["maggi"] },
   { id: "chinese-special", name: "Chinese Special", icon: "🥡", categories: ["chinese-special"] },
   { id: "nuggets", name: "Nuggets", icon: "🍗", categories: ["nuggets"] },
-  { id: "momos-section", name: "Momos", icon: "🥟", categories: ["momos", "pan-fried-momos"] },
+  { id: "momos-section", name: "Momos", icon: "🥟", categories: ["momos", "cheese-mushroom-momos", "pan-fried-momos"] },
   { id: "pizza-section", name: "Pizza", icon: "🍕", categories: ["basic-pizza", "amazing-pizza", "combo-pizza"] },
   { id: "mojitos-section", name: "Mojitos", icon: "🍹", categories: ["mojitos"] },
   { id: "beverages-section", name: "Beverages", icon: "🧊", categories: ["beverages"] },

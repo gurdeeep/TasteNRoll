@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Maggi noodles">
+  <defs>
+    <radialGradient id="mgbg" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#FFF2D6"/><stop offset="100%" stop-color="#F6D9A6"/>
+    </radialGradient>
+    <linearGradient id="mgbowl" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F2C14E"/><stop offset="100%" stop-color="#D19626"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="94" fill="url(#mgbg)"/>
+  <ellipse cx="100" cy="168" rx="54" ry="9" fill="#B8823C" opacity=".18"/>
+  <g stroke="#D9A24A" stroke-width="3.5" fill="none" opacity=".5" stroke-linecap="round">
+    <path d="M84 40c0-8 6-11 6-18s-6-9-6-16"/>
+    <path d="M100 34c0-8 6-11 6-18"/>
+    <path d="M116 40c0-8 6-11 6-18s-6-9-6-16"/>
+  </g>
+  <ellipse cx="100" cy="104" rx="64" ry="24" fill="#E8A33B"/>
+  <g fill="none" stroke="#F7D775" stroke-width="6" stroke-linecap="round">
+    <path d="M50 102c12-14 30-16 42-6"/>
+    <path d="M70 92c16-10 34-8 46 4"/>
+    <path d="M94 108c14-12 32-12 46-2"/>
+    <path d="M58 110c18 8 40 6 54-4"/>
+    <path d="M84 116c16 6 34 4 46-6"/>
+    <path d="M62 96c10-6 22-6 30 0"/>
+  </g>
+  <g>
+    <ellipse cx="76" cy="98" rx="6" ry="4" fill="#D94F3D"/>
+    <ellipse cx="124" cy="100" rx="6" ry="4" fill="#6FA84E"/>
+    <circle cx="102" cy="94" r="4.5" fill="#F26D2E"/>
+    <circle cx="90" cy="110" r="3.6" fill="#5C8C46"/>
+  </g>
+  <path d="M32 110c0 27 30 46 68 46s68-19 68-46c0 0-26 16-68 16s-68-16-68-16z" fill="url(#mgbowl)"/>
+  <path d="M40 132c14 10 36 16 60 16s46-6 60-16c-3 6-7 11-12 15-13 9-30 14-48 14s-35-5-48-14c-5-4-9-9-12-15z" fill="#B8801E" opacity=".45"/>
+  <path d="M108 78c14-10 30-4 34 6" stroke="#8A5A22" stroke-width="6" fill="none" stroke-linecap="round" opacity=".8"/>
+  <circle cx="146" cy="86" r="7" fill="#8A5A22" opacity=".8"/>
+</svg>

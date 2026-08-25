@@ -165,12 +165,12 @@ export default function DashboardPage() {
   // ===== PASSWORD SCREEN =====
   if (!authenticated) {
     return (
-      <div className="dashboard-page">
+      <div className="page dashboard-page">
         <div className="auth-gate">
           <div className="auth-card">
-            <div style={{ fontSize: "3rem", marginBottom: "0.5rem" }}>🔒</div>
+            <div className="auth-card-icon" aria-hidden="true">🔒</div>
             <h2>Dashboard Access</h2>
-            <p>Enter password to view sales & revenue</p>
+            <p>Enter password to view sales &amp; revenue</p>
             <form onSubmit={handleLogin}>
               <input
                 type="password"
@@ -193,16 +193,34 @@ export default function DashboardPage() {
 
   // ===== DASHBOARD (authenticated) =====
   return (
-    <div className="dashboard-page">
-      <div className="section-header" style={{ marginBottom: "1.5rem" }}>
-        <h2>📊 Dashboard</h2>
-        <p>Sales overview & revenue stats</p>
+    <div className="page dashboard-page">
+      <header className="page-head page-head-left">
+        <span className="section-eyebrow">Owner view</span>
+        <h2>Dashboard</h2>
+        <p>Sales overview &amp; revenue stats</p>
+      </header>
+
+      {/* Range picker sits above the numbers it controls */}
+      <div className="toolbar">
+        <div className="filter-buttons">
+          {presets.map((p) => (
+            <button
+              key={p.id}
+              className={`filter-btn ${activePreset === p.id ? "active" : ""}`}
+              onClick={() => handlePreset(p.id)}
+            >
+              {p.icon} {p.label}
+            </button>
+          ))}
+        </div>
+        <div className="filter-custom">
+          <label htmlFor="date-select">Custom date</label>
+          <input id="date-select" type="date" value={customDate} onChange={handleCustomDate} max={getISTDate()} />
+        </div>
       </div>
 
       {loading && !stats ? (
-        <div style={{ textAlign: "center", padding: "4rem 0", color: "var(--text-muted)" }}>
-          Loading dashboard...
-        </div>
+        <div className="loading-state">Loading dashboard…</div>
       ) : (
         <>
           {/* Stats Cards */}
@@ -241,25 +259,10 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Time Filter Buttons */}
-          <div className="dashboard-filters">
-            <div className="filter-buttons">
-              {presets.map((p) => (
-                <button key={p.id} className={`filter-btn ${activePreset === p.id ? "active" : ""}`} onClick={() => handlePreset(p.id)}>
-                  {p.icon} {p.label}
-                </button>
-              ))}
-            </div>
-            <div className="filter-custom">
-              <label htmlFor="date-select">📅 Custom:</label>
-              <input id="date-select" type="date" value={customDate} onChange={handleCustomDate} max={getISTDate()} />
-            </div>
-          </div>
-
-          {/* Daily Report Button */}
+          {/* Daily Report */}
           <div className="report-section">
             <button className="report-btn" onClick={fetchReport} disabled={reportLoading}>
-              {reportLoading ? "Generating..." : "📊 Generate Daily Report"}
+              {reportLoading ? "Generating…" : "📊 Generate Daily Report"}
             </button>
 
             {showReport && (

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="French fries">
+  <defs>
+    <radialGradient id="frbg" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#FFEDD3"/><stop offset="100%" stop-color="#F7D5A2"/>
+    </radialGradient>
+    <linearGradient id="frbox" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E2503F"/><stop offset="100%" stop-color="#B8352A"/>
+    </linearGradient>
+    <linearGradient id="fry" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FBD97C"/><stop offset="100%" stop-color="#E8B04B"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="94" fill="url(#frbg)"/>
+  <ellipse cx="100" cy="166" rx="52" ry="10" fill="#B8823C" opacity=".18"/>
+  <g fill="url(#fry)" stroke="#C99334" stroke-width="2.5" stroke-linejoin="round">
+    <rect x="62" y="36" width="15" height="76" rx="4" transform="rotate(-13 69 74)"/>
+    <rect x="82" y="26" width="15" height="86" rx="4" transform="rotate(-4 89 69)"/>
+    <rect x="102" y="30" width="15" height="82" rx="4" transform="rotate(6 109 71)"/>
+    <rect x="120" y="42" width="15" height="72" rx="4" transform="rotate(14 127 78)"/>
+    <rect x="72" y="48" width="13" height="66" rx="4" transform="rotate(3 78 81)"/>
+    <rect x="112" y="50" width="13" height="64" rx="4" transform="rotate(-6 118 82)"/>
+  </g>
+  <path d="M58 96h84l-10 62a10 10 0 0 1-10 8H78a10 10 0 0 1-10-8z" fill="url(#frbox)"/>
+  <path d="M58 96h84l-2 14H60z" fill="#F0F0F0" opacity=".9"/>
+  <path d="M78 122c8 10 36 10 44 0" stroke="#F7E3C2" stroke-width="5" fill="none" stroke-linecap="round" opacity=".85"/>
+  <circle cx="100" cy="146" r="9" fill="#FBE7C6" opacity=".9"/>
+  <path d="M96 143h8M96 149h8" stroke="#C0392B" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

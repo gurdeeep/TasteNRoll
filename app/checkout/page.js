@@ -124,12 +124,15 @@ export default function CheckoutPage() {
 
   if (cart.length === 0) {
     return (
-      <div className="checkout-page" style={{ textAlign: "center", paddingTop: "10rem" }}>
-        <h2>No items to bill</h2>
-        <p style={{ color: "var(--text-secondary)", marginTop: "0.5rem" }}>Add items from the menu first.</p>
-        <Link href="/menu" className="btn-primary" style={{ marginTop: "1.5rem", display: "inline-flex" }}>
-          📋 Open Menu
-        </Link>
+      <div className="page checkout-page">
+        <div className="empty-state">
+          <div className="empty-state-icon" aria-hidden="true">🧾</div>
+          <h2>No items to bill</h2>
+          <p>Add items from the menu first.</p>
+          <Link href="/menu" className="btn-primary">
+            Open Menu
+          </Link>
+        </div>
       </div>
     );
   }
@@ -141,96 +144,192 @@ export default function CheckoutPage() {
     return `Place Order – ₹${totalPrice} (${paymentMethod === "upi" ? "UPI" : "Cash"})`;
   };
 
+  const splitEntered = (parseFloat(splitCash) || 0) + (parseFloat(splitUpi) || 0);
+  const splitBalanced = Math.round(splitEntered) === totalPrice;
+
   return (
-    <div className="checkout-page">
-      <div className="section-header">
-        <h2>🧾 Finalize Order</h2>
-        <p>Enter customer details and payment method</p>
-      </div>
+    <div className="page checkout-page">
+      <header className="page-head page-head-left">
+        <span className="section-eyebrow">Step 2 of 2</span>
+        <h2>Customer &amp; Payment</h2>
+        <p>
+          <Link href="/cart" className="back-link">
+            ← Back to order
+          </Link>
+        </p>
+      </header>
 
-      <div className="checkout-grid">
-        {/* Left: Order items recap */}
-        <div className="cart-summary">
-          <h3>Order Items</h3>
-          {cart.map((item) => (
-            <div className="summary-row" key={item.key}>
-              <span>{item.name} ({item.variant}) × {item.qty}</span>
-              <span>₹{item.price * item.qty}</span>
+      <div className="order-layout">
+        {/* The form is the task on this page, so it leads */}
+        {/* id lets the submit button live in the summary card on the right
+            while still submitting this form */}
+        <form id="checkout-form" className="order-main checkout-form" onSubmit={handlePlaceOrder}>
+          <fieldset className="form-block">
+            <legend>Customer details</legend>
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="name">Customer name *</label>
+                <input
+                  id="name"
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  required
+                  placeholder="Who is this order for?"
+                  autoComplete="off"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="phone">Phone number</label>
+                <input
+                  id="phone"
+                  name="phone"
+                  value={form.phone}
+                  onChange={handleChange}
+                  placeholder="Optional — enables SMS & WhatsApp bill"
+                  type="tel"
+                />
+              </div>
             </div>
-          ))}
-          <div className="summary-row">
-            <span>Subtotal</span><span>₹{subtotal}</span>
-          </div>
-          {discountPercent > 0 && (
-            <div className="summary-row discount-row">
-              <span>Discount ({discountPercent}%)</span><span>−₹{discountAmount}</span>
-            </div>
-          )}
-          <div className="summary-row total">
-            <span>Total</span><span>₹{totalPrice}</span>
-          </div>
-        </div>
+          </fieldset>
 
-        {/* Right: Customer form */}
-        <form className="checkout-form" onSubmit={handlePlaceOrder}>
-          <h3 style={{ marginBottom: "1.25rem" }}>Customer Details</h3>
-          <div className="form-group">
-            <label htmlFor="name">Customer Name *</label>
-            <input id="name" name="name" value={form.name} onChange={handleChange} required placeholder="Customer name" autoComplete="off" />
-          </div>
-          <div className="form-group">
-            <label htmlFor="phone">Phone Number</label>
-            <input id="phone" name="phone" value={form.phone} onChange={handleChange} placeholder="+91 XXXXX XXXXX (optional)" type="tel" />
-          </div>
-
-          {/* Payment Method Selection */}
-          <div className="form-group">
-            <label>Payment Method</label>
+          <fieldset className="form-block">
+            <legend>How is the customer paying?</legend>
             <div className="payment-methods">
               <label className={`payment-option ${paymentMethod === "cash" ? "selected" : ""}`}>
-                <input type="radio" name="payment" value="cash" checked={paymentMethod === "cash"} onChange={() => setPaymentMethod("cash")} />
-                <span className="payment-icon">💵</span>
-                <div><strong>Cash</strong><small>Customer pays in cash</small></div>
+                <input
+                  type="radio"
+                  name="payment"
+                  value="cash"
+                  checked={paymentMethod === "cash"}
+                  onChange={() => setPaymentMethod("cash")}
+                />
+                <span className="payment-icon" aria-hidden="true">💵</span>
+                <span className="payment-text">
+                  <strong>Cash</strong>
+                  <small>Paid at the counter</small>
+                </span>
               </label>
               <label className={`payment-option ${paymentMethod === "upi" ? "selected" : ""}`}>
-                <input type="radio" name="payment" value="upi" checked={paymentMethod === "upi"} onChange={() => setPaymentMethod("upi")} />
-                <span className="payment-icon">📱</span>
-                <div><strong>UPI</strong><small>Customer pays via UPI</small></div>
-              </label>
-              <label className={`payment-option ${paymentMethod === "unpaid" ? "selected" : ""}`}>
-                <input type="radio" name="payment" value="unpaid" checked={paymentMethod === "unpaid"} onChange={() => setPaymentMethod("unpaid")} />
-                <span className="payment-icon">⏳</span>
-                <div><strong>Unpaid</strong><small>Customer pays later</small></div>
+                <input
+                  type="radio"
+                  name="payment"
+                  value="upi"
+                  checked={paymentMethod === "upi"}
+                  onChange={() => setPaymentMethod("upi")}
+                />
+                <span className="payment-icon" aria-hidden="true">📱</span>
+                <span className="payment-text">
+                  <strong>UPI</strong>
+                  <small>Scan and pay</small>
+                </span>
               </label>
               <label className={`payment-option ${paymentMethod === "split" ? "selected" : ""}`}>
-                <input type="radio" name="payment" value="split" checked={paymentMethod === "split"} onChange={() => { setPaymentMethod("split"); setSplitCash(String(totalPrice)); setSplitUpi("0"); }} />
-                <span className="payment-icon">💳</span>
-                <div><strong>Split</strong><small>Part cash, part UPI</small></div>
+                <input
+                  type="radio"
+                  name="payment"
+                  value="split"
+                  checked={paymentMethod === "split"}
+                  onChange={() => {
+                    setPaymentMethod("split");
+                    setSplitCash(String(totalPrice));
+                    setSplitUpi("0");
+                  }}
+                />
+                <span className="payment-icon" aria-hidden="true">💳</span>
+                <span className="payment-text">
+                  <strong>Split</strong>
+                  <small>Part cash, part UPI</small>
+                </span>
+              </label>
+              <label className={`payment-option ${paymentMethod === "unpaid" ? "selected" : ""}`}>
+                <input
+                  type="radio"
+                  name="payment"
+                  value="unpaid"
+                  checked={paymentMethod === "unpaid"}
+                  onChange={() => setPaymentMethod("unpaid")}
+                />
+                <span className="payment-icon" aria-hidden="true">⏳</span>
+                <span className="payment-text">
+                  <strong>Unpaid</strong>
+                  <small>Runs a tab, settle later</small>
+                </span>
               </label>
             </div>
-          </div>
 
-          {/* Split payment inputs */}
-          {paymentMethod === "split" && (
-            <div className="split-inputs">
-              <div className="split-field">
-                <label>💵 Cash Amount</label>
-                <input type="number" min="0" max={totalPrice} value={splitCash} onChange={(e) => handleSplitCash(e.target.value)} placeholder="0" />
+            {paymentMethod === "split" && (
+              <div className="split-inputs">
+                <div className="split-field">
+                  <label htmlFor="split-cash">💵 Cash amount</label>
+                  <input
+                    id="split-cash"
+                    type="number"
+                    min="0"
+                    max={totalPrice}
+                    value={splitCash}
+                    onChange={(e) => handleSplitCash(e.target.value)}
+                    placeholder="0"
+                  />
+                </div>
+                <div className="split-field">
+                  <label htmlFor="split-upi">📱 UPI amount</label>
+                  <input
+                    id="split-upi"
+                    type="number"
+                    min="0"
+                    max={totalPrice}
+                    value={splitUpi}
+                    onChange={(e) => handleSplitUpi(e.target.value)}
+                    placeholder="0"
+                  />
+                </div>
+                <div className={`split-total ${splitBalanced ? "ok" : "off"}`}>
+                  {splitBalanced ? "✓ Matches total" : `₹${splitEntered} of ₹${totalPrice}`}
+                </div>
               </div>
-              <div className="split-field">
-                <label>📱 UPI Amount</label>
-                <input type="number" min="0" max={totalPrice} value={splitUpi} onChange={(e) => handleSplitUpi(e.target.value)} placeholder="0" />
-              </div>
-              <div className="split-total">
-                Total: ₹{(parseFloat(splitCash) || 0) + (parseFloat(splitUpi) || 0)} / ₹{totalPrice}
-              </div>
-            </div>
-          )}
-
-          <button type="submit" className="pay-btn" disabled={loading}>
-            {btnLabel()}
-          </button>
+            )}
+          </fieldset>
         </form>
+
+        {/* Bill recap stays visible while the form is filled in */}
+        <aside className="order-aside">
+          <div className="summary-card">
+            <h3>Order Summary</h3>
+
+            <ul className="summary-items">
+              {cart.map((item) => (
+                <li className="summary-item" key={item.key}>
+                  <span className="summary-item-qty">{item.qty}×</span>
+                  <span className="summary-item-name">
+                    {item.name}
+                    <small>{item.variant}</small>
+                  </span>
+                  <span className="summary-item-price">₹{item.price * item.qty}</span>
+                </li>
+              ))}
+            </ul>
+
+            <div className="summary-row">
+              <span>Subtotal</span>
+              <span>₹{subtotal}</span>
+            </div>
+            {discountPercent > 0 && (
+              <div className="summary-row discount-row">
+                <span>Discount ({discountPercent}%)</span>
+                <span>−₹{discountAmount}</span>
+              </div>
+            )}
+            <div className="summary-row total">
+              <span>Total</span>
+              <span>₹{totalPrice}</span>
+            </div>
+
+            <button type="submit" form="checkout-form" className="pay-btn" disabled={loading}>
+              {btnLabel()}
+            </button>
+          </div>
+        </aside>
       </div>
     </div>
   );

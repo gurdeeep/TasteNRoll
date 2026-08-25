@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Burger">
+  <defs>
+    <radialGradient id="bgbg" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#FFEFD2"/><stop offset="100%" stop-color="#F6D6A4"/>
+    </radialGradient>
+    <linearGradient id="bun" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F0BE72"/><stop offset="100%" stop-color="#D69B4A"/>
+    </linearGradient>
+    <linearGradient id="bunb" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E4AC5D"/><stop offset="100%" stop-color="#C68A3D"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="94" fill="url(#bgbg)"/>
+  <ellipse cx="100" cy="163" rx="56" ry="10" fill="#B8823C" opacity=".18"/>
+  <g transform="translate(0 6)">
+    <path d="M38 78c0-28 28-46 62-46s62 18 62 46z" fill="url(#bun)"/>
+    <g fill="#FFF6E4" opacity=".85">
+      <ellipse cx="72" cy="56" rx="4" ry="2.6" transform="rotate(-18 72 56)"/>
+      <ellipse cx="100" cy="48" rx="4.2" ry="2.6"/>
+      <ellipse cx="128" cy="57" rx="4" ry="2.6" transform="rotate(18 128 57)"/>
+      <ellipse cx="86" cy="68" rx="3.6" ry="2.4"/>
+      <ellipse cx="114" cy="68" rx="3.6" ry="2.4"/>
+    </g>
+    <path d="M36 78h128a6 6 0 0 1 0 12H36a6 6 0 0 1 0-12z" fill="#E9B968"/>
+    <path d="M34 90c14 8 30 6 44 1s34-6 48 0 30 6 42-2c2 8-2 14-8 14H40c-6 0-8-6-6-13z" fill="#6FA84E"/>
+    <rect x="34" y="102" width="132" height="16" rx="8" fill="#8A4A2A"/>
+    <path d="M42 108h116" stroke="#6E3820" stroke-width="3" opacity=".5" stroke-linecap="round"/>
+    <path d="M40 116h120l-8 12c-6 8-14 4-20 10-6-8-16-2-22-8-6 8-16 2-22 8-6-8-16-2-22-10z" fill="#F2C14E"/>
+    <path d="M36 130h128c0 20-28 32-64 32s-64-12-64-32z" fill="url(#bunb)"/>
+    <ellipse cx="70" cy="98" rx="8" ry="4" fill="#D94F3D"/>
+    <ellipse cx="130" cy="98" rx="8" ry="4" fill="#D94F3D"/>
+  </g>
+</svg>

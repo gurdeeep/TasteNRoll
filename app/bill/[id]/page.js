@@ -3,12 +3,13 @@ import { useState, useEffect, useRef, use } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "../../context/CartContext";
-
-const SHOP_NAME = "Taste N' RoLLs";
-const SHOP_ADDRESS = "Shop No. 168, Opp. Bus Stand Parking Gate, Sampla - Jhajjar Road, Near Bus Stand Sampla, 124501";
-const SHOP_PHONE = "949-949-8323";
-const SHOP_ENQUIRY = "870-850-9490";
-const SHOP_TAGLINE = "Eat Healthy. Be Healthy.";
+import {
+  SHOP_NAME,
+  SHOP_ADDRESS,
+  SHOP_PHONE,
+  SHOP_ENQUIRY,
+  SHOP_TAGLINE,
+} from "../../data/shop";
 
 export default function BillPage({ params }) {
   const { id } = use(params);

@@ -133,14 +133,14 @@ export default function HistoryPage() {
     : `${formatDate(dateRange.start)} – ${formatDate(dateRange.end)}`;
 
   return (
-    <div className="dashboard-page">
-      <div className="section-header" style={{ marginBottom: "1.5rem" }}>
-        <h2>📜 Order History</h2>
-        <p>View past orders</p>
-      </div>
+    <div className="page dashboard-page">
+      <header className="page-head page-head-left">
+        <span className="section-eyebrow">Records</span>
+        <h2>Order History</h2>
+        <p>Every order placed, by date</p>
+      </header>
 
-      {/* Time Filter Buttons */}
-      <div className="dashboard-filters">
+      <div className="toolbar">
         <div className="filter-buttons">
           {presets.map((p) => (
             <button key={p.id} className={`filter-btn ${activePreset === p.id ? "active" : ""}`} onClick={() => handlePreset(p.id)}>
@@ -149,16 +149,14 @@ export default function HistoryPage() {
           ))}
         </div>
         <div className="filter-custom">
-          <label htmlFor="hist-date">📅 Custom:</label>
+          <label htmlFor="hist-date">Custom date</label>
           <input id="hist-date" type="date" value={customDate} onChange={handleCustomDate} max={getISTDate()} />
         </div>
       </div>
 
       {/* Orders List */}
       {loading ? (
-        <div style={{ textAlign: "center", padding: "4rem 0", color: "var(--text-muted)" }}>
-          Loading orders...
-        </div>
+        <div className="loading-state">Loading orders…</div>
       ) : (
         <div className="dashboard-orders">
           <h3 className="dashboard-orders-title">

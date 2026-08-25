@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Chicken roll">
+  <defs>
+    <radialGradient id="rkbg" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#FCE4D4"/><stop offset="100%" stop-color="#EEC0A2"/>
+    </radialGradient>
+    <linearGradient id="rktort" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#EFC581"/><stop offset="55%" stop-color="#DDA75C"/><stop offset="100%" stop-color="#BC833D"/>
+    </linearGradient>
+    <linearGradient id="rkfoil" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#E8ECEF"/><stop offset="45%" stop-color="#C3CBD2"/><stop offset="100%" stop-color="#9AA5AE"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="94" fill="url(#rkbg)"/>
+  <ellipse cx="100" cy="168" rx="58" ry="10" fill="#B8823C" opacity=".18"/>
+  <g transform="translate(100 98) rotate(-28)">
+    <rect x="-31" y="-74" width="62" height="150" rx="30" fill="url(#rktort)"/>
+    <path d="M-31 -18c20 10 42 10 62 0" stroke="#B07B36" stroke-width="3" fill="none" opacity=".5" stroke-linecap="round"/>
+    <path d="M-31 8c20 10 42 10 62 0" stroke="#B07B36" stroke-width="3" fill="none" opacity=".4" stroke-linecap="round"/>
+    <path d="M-31 30h62v18a30 30 0 0 1-30 28 30 30 0 0 1-32-28z" fill="url(#rkfoil)"/>
+    <path d="M-27 38h54M-25 50h50" stroke="#7D8790" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
+    <ellipse cx="0" cy="-74" rx="31" ry="13" fill="#F6DAAB"/>
+    <ellipse cx="0" cy="-74" rx="24" ry="9" fill="#8E5C2A" opacity=".32"/>
+    <g>
+      <rect x="-21" y="-86" width="16" height="14" rx="6" fill="#D07B3C" stroke="#AE5F28" stroke-width="1.5" transform="rotate(-16 -13 -79)"/>
+      <rect x="-3" y="-90" width="15" height="13" rx="6" fill="#DA8845" stroke="#AE5F28" stroke-width="1.5" transform="rotate(10 4 -83)"/>
+      <rect x="9" y="-82" width="14" height="12" rx="6" fill="#C97236" stroke="#AE5F28" stroke-width="1.5" transform="rotate(-6 16 -76)"/>
+      <circle cx="-9" cy="-68" r="4.2" fill="#6FA84E"/>
+      <circle cx="8" cy="-66" r="3.8" fill="#8B4EA8"/>
+    </g>
+  </g>
+  <g fill="#C0392B" opacity=".3">
+    <path d="M36 56c7-8 17-8 23-1-8 8-17 8-23 1z"/>
+    <path d="M164 144c-7 8-17 8-23 1 8-8 17-8 23-1z"/>
+  </g>
+</svg>

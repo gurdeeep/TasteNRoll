@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Pasta">
+  <defs>
+    <radialGradient id="psbg" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#FFEFDA"/><stop offset="100%" stop-color="#F5D6AB"/>
+    </radialGradient>
+    <linearGradient id="bowl" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#D9DEE3"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="94" fill="url(#psbg)"/>
+  <ellipse cx="100" cy="168" rx="56" ry="9" fill="#B8823C" opacity=".18"/>
+  <ellipse cx="100" cy="106" rx="70" ry="24" fill="#C0392B" opacity=".18"/>
+  <g>
+    <ellipse cx="100" cy="100" rx="66" ry="26" fill="#E8503E"/>
+    <g fill="none" stroke="#F3C25C" stroke-width="7" stroke-linecap="round">
+      <path d="M52 98c14-14 34-16 48-6"/>
+      <path d="M74 88c16-10 34-8 46 4"/>
+      <path d="M96 104c14-12 32-12 46-2"/>
+      <path d="M60 108c18 8 40 6 54-4"/>
+      <path d="M86 112c16 6 34 4 46-6"/>
+    </g>
+    <g fill="#C0392B">
+      <ellipse cx="70" cy="96" rx="7" ry="4.5" transform="rotate(-15 70 96)"/>
+      <ellipse cx="122" cy="94" rx="7" ry="4.5" transform="rotate(12 122 94)"/>
+    </g>
+    <g fill="#5C8C46">
+      <ellipse cx="94" cy="90" rx="5" ry="3.5"/>
+      <ellipse cx="110" cy="106" rx="5" ry="3.5"/>
+    </g>
+    <g fill="#FCF6E7"><circle cx="84" cy="102" r="4"/><circle cx="130" cy="104" r="3.4"/></g>
+  </g>
+  <path d="M34 108c0 26 30 44 66 44s66-18 66-44c0 0-24 16-66 16s-66-16-66-16z" fill="url(#bowl)"/>
+  <path d="M34 108c0 4 2 8 4 12 16 8 38 12 62 12s46-4 62-12c2-4 4-8 4-12 0 0-24 16-66 16s-66-16-66-16z" fill="#B9C1C9" opacity=".5"/>
+  <g stroke="#C9973F" stroke-width="3" fill="none" opacity=".45" stroke-linecap="round">
+    <path d="M100 44c0-8 6-12 6-20"/><path d="M112 48c2-7 8-10 8-18"/><path d="M88 48c-2-7-8-10-8-18"/>
+  </g>
+</svg>

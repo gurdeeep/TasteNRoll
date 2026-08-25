@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
 import { pizzaAddOns, generalAddOns } from "../data/menu";
+import DishArt from "./DishArt";
 
 export default function MenuItem({ item, categoryType, labels, isPizza, addonEligible }) {
   const { addToCart, cart } = useCart();
@@ -209,12 +210,15 @@ export default function MenuItem({ item, categoryType, labels, isPizza, addonEli
   return (
     <>
       <div className={`menu-item ${item.veg ? "veg-item" : "nonveg-item"}`}>
-        <div className="menu-item-top">
-          <span className="menu-item-name">{item.name}</span>
-          <span className={item.veg ? "veg-badge" : "nonveg-badge"}></span>
+        <DishArt id={item.id} name={item.name} size={66} />
+        <div className="menu-item-body">
+          <div className="menu-item-top">
+            <span className="menu-item-name">{item.name}</span>
+            <span className={item.veg ? "veg-badge" : "nonveg-badge"}></span>
+          </div>
+          {item.description && <div className="menu-item-desc">{item.description}</div>}
+          {renderPrices()}
         </div>
-        {item.description && <div className="menu-item-desc">{item.description}</div>}
-        {renderPrices()}
       </div>
 
       {/* Pizza Add-On Popup */}
@@ -222,7 +226,9 @@ export default function MenuItem({ item, categoryType, labels, isPizza, addonEli
         <div className="addon-overlay" onClick={skipAddOns}>
           <div className="addon-modal" onClick={(e) => e.stopPropagation()}>
             <button className="qr-close" onClick={skipAddOns}>✕</button>
-            <div className="addon-modal-icon">🍕</div>
+            <div className="addon-modal-icon">
+              <DishArt id={item.id} name={item.name} size={76} />
+            </div>
             <h3>Customize Your Pizza</h3>
             <p className="addon-modal-sub">
               <strong>{item.name}</strong> — {sizeLabel} (₹{popup.price})
@@ -265,7 +271,9 @@ export default function MenuItem({ item, categoryType, labels, isPizza, addonEli
         <div className="addon-overlay" onClick={skipAddOns}>
           <div className="addon-modal addon-modal-wide" onClick={(e) => e.stopPropagation()}>
             <button className="qr-close" onClick={skipAddOns}>✕</button>
-            <div className="addon-modal-icon">➕</div>
+            <div className="addon-modal-icon">
+              <DishArt id={item.id} name={item.name} size={76} />
+            </div>
             <h3>Any add-ons?</h3>
             <p className="addon-modal-sub">
               <strong>{item.name}</strong> — {popup.variant} (₹{popup.price})

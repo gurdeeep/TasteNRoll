@@ -262,6 +262,9 @@ export async function GET(req) {
     const { data: orders, error: dbError } = await supabase
       .from("orders")
       .select("*")
+      // Online orders sit at 'pending_online' until the owner confirms the UPI
+      // payment. Only confirmed money belongs in the month's report.
+      .neq("status", "pending_online")
       .gte("created_at", startISO)
       .lte("created_at", endISO)
       .order("created_at", { ascending: true });

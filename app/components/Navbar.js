@@ -5,47 +5,83 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useCart } from "../context/CartContext";
 import { useTheme } from "../context/ThemeContext";
+import { useSession } from "../context/SessionContext";
 
-// One list drives the desktop links and the mobile sheet, so the two can never
-// drift apart the way they had (Menu appeared in both, Dashboard in only one).
-const NAV_LINKS = [
-  { href: "/menu", label: "Menu", icon: "📋" },
-  { href: "/unpaid", label: "Unpaid", icon: "⏳", badge: "unpaid" },
-  { href: "/history", label: "History", icon: "📜" },
-  { href: "/dashboard", label: "Dashboard", icon: "📊" },
-];
-
-export default function Navbar() {
+// One navbar, two areas. The links are handed in by whichever area layout
+// rendered it, so the counter's Dashboard link can never appear on the
+// customer site and vice versa.
+export default function Navbar({ links = [], role = "customer", homeHref = "/" }) {
   const pathname = usePathname();
   const { totalItems, totalPrice } = useCart();
   const { theme, toggleTheme } = useTheme();
+  const { owner, customer, logout } = useSession();
   const [open, setOpen] = useState(false);
-  const [unpaidCount, setUnpaidCount] = useState(0);
+  const [badges, setBadges] = useState({ unpaid: 0, live: 0 });
+
+  const who = role === "owner" ? owner : customer;
+  const cartHref = role === "owner" ? "/owner/cart" : "/customer/cart";
 
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
 
+  // Only the counter has counters to poll. A customer's navbar makes no
+  // background requests at all.
   useEffect(() => {
-    const fetchUnpaid = async () => {
-      try {
-        const res = await fetch("/api/orders?status=unpaid");
-        const data = await res.json();
-        if (data.success) setUnpaidCount(data.orders?.length || 0);
-      } catch {}
-    };
-    fetchUnpaid();
-    const interval = setInterval(fetchUnpaid, 30000);
-    return () => clearInterval(interval);
-  }, [pathname]);
+    if (role !== "owner") return;
 
-  const badgeFor = (link) =>
-    link.badge === "unpaid" && unpaidCount > 0 ? unpaidCount : null;
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const [unpaidRes, liveRes] = await Promise.all([
+          fetch("/api/orders?status=unpaid"),
+          fetch("/api/owner/orders"),
+        ]);
+        const unpaid = unpaidRes.ok ? await unpaidRes.json() : null;
+        const live = liveRes.ok ? await liveRes.json() : null;
+        if (cancelled) return;
+        setBadges({
+          unpaid: unpaid?.orders?.length || 0,
+          live: live?.orders?.length || 0,
+        });
+      } catch {
+        /* a failed badge poll is not worth interrupting anyone over */
+      }
+    };
+
+    load();
+    const interval = setInterval(load, 30000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [role, pathname]);
+
+  const badgeFor = (link) => {
+    const count = link.badge ? badges[link.badge] : 0;
+    return count > 0 ? count : null;
+  };
+
+  const renderLink = (link, onNavigate) => {
+    const badge = badgeFor(link);
+    return (
+      <Link
+        key={link.href}
+        href={link.href}
+        className={`${pathname === link.href ? "active" : ""} ${badge ? "has-badge" : ""}`}
+        onClick={onNavigate}
+      >
+        <span aria-hidden="true">{link.icon}</span>
+        {link.label}
+        {badge && <span className="nav-badge">{badge}</span>}
+      </Link>
+    );
+  };
 
   return (
-    <nav className="navbar">
+    <nav className={`navbar ${role === "owner" ? "navbar-owner" : ""}`}>
       <div className="navbar-inner">
-        <Link href="/" className="navbar-logo">
+        <Link href={homeHref} className="navbar-logo">
           <Image
             src="/brand/logo-mark.svg"
             alt=""
@@ -55,10 +91,11 @@ export default function Navbar() {
             priority
           />
           Taste N&apos; RoLLs
+          {role === "owner" && <span className="navbar-role-tag">Counter</span>}
         </Link>
 
         <div className="navbar-links">
-          {NAV_LINKS.map((link) => {
+          {links.map((link) => {
             const badge = badgeFor(link);
             return (
               <Link
@@ -85,7 +122,7 @@ export default function Navbar() {
             {theme === "dark" ? "☀️" : "🌙"}
           </button>
 
-          <Link href="/cart" className="cart-btn">
+          <Link href={cartHref} className="cart-btn">
             🧾
             <span className="cart-btn-label">Bill</span>
             {totalItems > 0 && (
@@ -95,6 +132,17 @@ export default function Navbar() {
               </>
             )}
           </Link>
+
+          {who && (
+            <button
+              className="navbar-logout"
+              onClick={() => logout(role)}
+              title={role === "owner" ? "Sign out of the counter" : `Signed in as ${who.name}`}
+            >
+              <span aria-hidden="true">⏻</span>
+              <span className="navbar-logout-label">Sign out</span>
+            </button>
+          )}
 
           <button
             className="menu-toggle"
@@ -109,21 +157,12 @@ export default function Navbar() {
 
       {open && (
         <div className="navbar-sheet">
-          {NAV_LINKS.map((link) => {
-            const badge = badgeFor(link);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={pathname === link.href ? "active" : ""}
-                onClick={() => setOpen(false)}
-              >
-                <span aria-hidden="true">{link.icon}</span>
-                {link.label}
-                {badge && <span className="nav-badge">{badge}</span>}
-              </Link>
-            );
-          })}
+          {links.map((link) => renderLink(link, () => setOpen(false)))}
+          {who && (
+            <button className="navbar-sheet-logout" onClick={() => logout(role)}>
+              <span aria-hidden="true">⏻</span> Sign out
+            </button>
+          )}
         </div>
       )}
     </nav>

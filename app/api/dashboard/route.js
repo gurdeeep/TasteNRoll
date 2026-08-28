@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "../../lib/supabase";
+import { requireOwner } from "../../lib/auth";
 
 export async function GET(req) {
   try {
+    // Sales figures are owner-only.
+    const { error: authError } = await requireOwner();
+    if (authError) return authError;
+
     const { searchParams } = new URL(req.url);
     const startDate = searchParams.get("startDate");
     const endDate = searchParams.get("endDate");
@@ -21,9 +26,13 @@ export async function GET(req) {
       return NextResponse.json({ error: "Failed to fetch orders" }, { status: 500 });
     }
 
-    // Separate paid and unpaid orders
-    const paidOrders = allOrders?.filter((o) => o.status !== "unpaid") || [];
+    // Separate paid, unpaid, and online orders still awaiting confirmation.
+    // 'pending_online' is an online order whose UPI payment the owner has not
+    // verified yet: it is neither takings nor an unpaid counter tab, so it is
+    // excluded from both totals until confirmed.
+    const paidOrders = allOrders?.filter((o) => o.status === "completed") || [];
     const unpaidOrders = allOrders?.filter((o) => o.status === "unpaid") || [];
+    const pendingOnline = allOrders?.filter((o) => o.status === "pending_online") || [];
 
     // Calculate total stats (paid only)
     const totalSales = paidOrders.length;
@@ -63,6 +72,7 @@ export async function GET(req) {
         endDate: filterEnd,
         unpaidCount: unpaidOrders.length,
         unpaidTotal,
+        pendingOnlineCount: pendingOnline.length,
       },
       orders: filteredOrders,
       unpaidOrders,

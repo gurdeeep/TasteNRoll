@@ -1,8 +1,6 @@
 "use client";
 import { useState, useEffect, useRef, use } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useCart } from "../../context/CartContext";
 import {
   SHOP_NAME,
   SHOP_ADDRESS,
@@ -17,8 +15,6 @@ export default function BillPage({ params }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const receiptRef = useRef(null);
-  const router = useRouter();
-  const { setCart, setDiscount } = useCart();
 
   useEffect(() => {
     async function fetchOrder() {
@@ -40,20 +36,6 @@ export default function BillPage({ params }) {
   }, [id]);
 
   const handlePrint = () => window.print();
-
-  const handleEditOrder = () => {
-    if (!order) return;
-    const cartItems = order.items.map((item) => ({
-      ...item,
-      key: `${item.id}-${item.variant}`,
-    }));
-    setCart(cartItems);
-    if (order.discount_percent) {
-      setDiscount(order.discount_percent);
-    }
-    sessionStorage.setItem("editingOrderId", order.order_id);
-    router.push("/cart");
-  };
 
   if (loading) {
     return (

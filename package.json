@@ -6,12 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "gen-secret": "node scripts/gen-secret.mjs",
+    "check-setup": "node scripts/check-setup.mjs",
+    "test": "node scripts/test-pricing.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.4",
+    "jose": "^6.2.10",
     "next": "16.2.6",
     "pdfkit": "^0.19.1",
+    "qrcode": "^1.5.4",
     "razorpay": "^2.9.6",
     "react": "19.2.4",
     "react-dom": "19.2.4"

@@ -39,8 +39,8 @@ export default function Footer() {
           </div>
           <div className="footer-meta-block">
             <h4>Explore</h4>
-            <Link href="/menu">Full Menu</Link>
-            <Link href="/cart">Current Order</Link>
+            <Link href="/customer/menu">Full Menu</Link>
+            <Link href="/customer/cart">Current Order</Link>
           </div>
         </div>
 

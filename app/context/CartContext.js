@@ -1,21 +1,43 @@
 "use client";
-import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 const CartContext = createContext();
+
+// The counter and a customer are two different baskets. If the owner ever opens
+// the customer site in the same browser, one must not overwrite the other, so
+// each area gets its own localStorage key.
+const storageKeyFor = (pathname) =>
+  pathname?.startsWith("/owner") ? "rollbox-cart-owner" : "rollbox-cart";
 
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
   const [toasts, setToasts] = useState([]);
   const [discountPercent, setDiscountPercent] = useState(0); // 0-100
 
-  useEffect(() => {
-    const saved = localStorage.getItem("rollbox-cart");
-    if (saved) setCart(JSON.parse(saved));
-  }, []);
+  const pathname = usePathname();
+  const storageKey = storageKeyFor(pathname);
+  // Which key the in-memory cart currently belongs to. Without this, moving
+  // between the two areas would write the old basket into the new key before
+  // the load below had a chance to run.
+  const loadedKey = useRef(null);
 
   useEffect(() => {
-    localStorage.setItem("rollbox-cart", JSON.stringify(cart));
-  }, [cart]);
+    if (loadedKey.current === storageKey) return;
+    try {
+      const saved = localStorage.getItem(storageKey);
+      setCart(saved ? JSON.parse(saved) : []);
+    } catch {
+      setCart([]);
+    }
+    setDiscountPercent(0);
+    loadedKey.current = storageKey;
+  }, [storageKey]);
+
+  useEffect(() => {
+    if (loadedKey.current !== storageKey) return;
+    localStorage.setItem(storageKey, JSON.stringify(cart));
+  }, [cart, storageKey]);
 
   const addToCart = useCallback((item) => {
     setCart((prev) => {

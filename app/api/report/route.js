@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "../../lib/supabase";
+import { requireOwner } from "../../lib/auth";
 import { menuData } from "../../data/menu";
 
 // Build a lookup: item ID → category name & icon
@@ -129,6 +130,10 @@ function generateReport(orders, dateLabel) {
 
 export async function GET(req) {
   try {
+    // Sales figures are owner-only.
+    const { error: authError } = await requireOwner();
+    if (authError) return authError;
+
     const { searchParams } = new URL(req.url);
     const date = searchParams.get("date");
 

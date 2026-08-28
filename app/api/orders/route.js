@@ -1,8 +1,16 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "../../lib/supabase";
+import { requireOwner, getSession } from "../../lib/auth";
+
+// This is the POS endpoint: creating, editing and deleting orders at the
+// counter. Every method is owner-only. The proxy already redirects browsers,
+// but a proxy is not a security boundary - a direct fetch has to fail here too.
 
 export async function POST(req) {
   try {
+    const { error: authError } = await requireOwner();
+    if (authError) return authError;
+
     const { customer, items, total, paymentMethod, subtotal, discountPercent, discountAmount, cashAmount, upiAmount } = await req.json();
 
     if (!customer?.name) {
@@ -66,10 +74,24 @@ export async function GET(req) {
     const orderId = searchParams.get("id");
     const status = searchParams.get("status");
 
+    // Reading orders needs a session. The owner sees any order; a customer
+    // sees only their own, which is what makes /bill/<id> safe to link to
+    // without the id itself being a secret.
+    const [owner, customer] = await Promise.all([
+      getSession("owner"),
+      getSession("customer"),
+    ]);
+    if (!owner && !customer) {
+      return NextResponse.json({ error: "Not signed in" }, { status: 401 });
+    }
+
     const supabase = createServerClient();
 
-    // List orders by status (e.g. unpaid)
+    // List orders by status (e.g. unpaid) - counter view, owner only
     if (status) {
+      if (!owner) {
+        return NextResponse.json({ error: "Not allowed" }, { status: 403 });
+      }
       const { data, error } = await supabase
         .from("orders")
         .select("*")
@@ -87,11 +109,12 @@ export async function GET(req) {
       return NextResponse.json({ error: "Missing order ID" }, { status: 400 });
     }
 
-    const { data, error } = await supabase
-      .from("orders")
-      .select("*")
-      .eq("order_id", orderId)
-      .single();
+    let query = supabase.from("orders").select("*").eq("order_id", orderId);
+    // Scoping the query itself (rather than filtering after) means a customer
+    // guessing another order id gets a plain 404, leaking nothing.
+    if (!owner) query = query.eq("customer_id", customer.sub);
+
+    const { data, error } = await query.maybeSingle();
 
     if (error || !data) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
@@ -106,6 +129,9 @@ export async function GET(req) {
 
 export async function PATCH(req) {
   try {
+    const { error: authError } = await requireOwner();
+    if (authError) return authError;
+
     const { orderId, items, total, subtotal, discountPercent, discountAmount, paymentMethod, status, cashAmount, upiAmount } = await req.json();
 
     if (!orderId) {
@@ -150,6 +176,9 @@ export async function PATCH(req) {
 
 export async function DELETE(req) {
   try {
+    const { error: authError } = await requireOwner();
+    if (authError) return authError;
+
     const { searchParams } = new URL(req.url);
     const orderId = searchParams.get("id");
 

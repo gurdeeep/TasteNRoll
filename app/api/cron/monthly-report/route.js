@@ -1,23 +1,12 @@
 import { NextResponse } from "next/server";
+import { authoriseCron } from "../../../lib/cronAuth";
 import { createServerClient } from "../../../lib/supabase";
-import { menuData } from "../../../data/menu";
+import { buildItemCategoryMap } from "../../../lib/salesReport";
 import PDFDocument from "pdfkit";
 
 const SHOP_NAME = "Taste N' RoLLs";
 const SHOP_ADDRESS = "Shop No. 168, Opp. Bus Stand Parking Gate, Sampla";
 
-// Build item category lookup
-function buildItemCategoryMap() {
-  const map = {};
-  menuData.forEach((cat) => {
-    cat.items.forEach((item) => {
-      map[item.id] = { category: cat.name };
-    });
-  });
-  return map;
-}
-
-// Get previous month's date range in IST
 function getPreviousMonthRange() {
   const now = new Date();
   const istOffset = 5.5 * 60 * 60 * 1000;
@@ -246,14 +235,10 @@ async function generatePDF(orders, monthName) {
 // Monthly report cron — runs on 1st of every month at 10 AM IST
 export async function GET(req) {
   try {
-    // Verify cron secret
-    const authHeader = req.headers.get("authorization");
-    const { searchParams } = new URL(req.url);
-    const querySecret = searchParams.get("secret");
-    const cronSecret = process.env.CRON_SECRET;
-    if (cronSecret && authHeader !== `Bearer ${cronSecret}` && querySecret !== cronSecret) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    // Fail closed. This endpoint PERMANENTLY DELETES the month's orders
+    // after emailing them, so an unset CRON_SECRET must not mean open access.
+    const denied = await authoriseCron(req);
+    if (denied) return denied;
 
     const supabase = createServerClient();
     const { startISO, endISO, monthName } = getPreviousMonthRange();
@@ -271,7 +256,7 @@ export async function GET(req) {
 
     if (dbError) {
       console.error("DB error:", dbError);
-      return NextResponse.json({ error: "Failed to fetch orders", details: dbError.message }, { status: 500 });
+      return NextResponse.json({ error: "Failed to fetch orders" }, { status: 500 });
     }
 
     if (!orders || orders.length === 0) {
@@ -287,7 +272,7 @@ export async function GET(req) {
       pdfBuffer = await generatePDF(orders, monthName);
     } catch (pdfErr) {
       console.error("PDF generation error:", pdfErr);
-      return NextResponse.json({ error: "Failed to generate PDF", details: pdfErr.message }, { status: 500 });
+      return NextResponse.json({ error: "Failed to generate PDF" }, { status: 500 });
     }
 
     // Send email with PDF attachment via Resend
@@ -348,7 +333,6 @@ export async function GET(req) {
       return NextResponse.json({
         success: false,
         error: "Failed to send email. Data NOT cleared.",
-        details: emailResult,
       }, { status: 500 });
     }
 
@@ -370,7 +354,6 @@ export async function GET(req) {
           success: false,
           error: `Email sent but failed to delete orders at batch ${i}. ${deletedCount} already deleted.`,
           emailId: emailResult.id,
-          details: deleteError.message,
         }, { status: 500 });
       }
       deletedCount += batch.length;
@@ -387,6 +370,6 @@ export async function GET(req) {
     });
   } catch (err) {
     console.error("Monthly report error:", err);
-    return NextResponse.json({ error: "Internal server error", details: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

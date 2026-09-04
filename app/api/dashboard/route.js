@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "../../lib/supabase";
 import { requireOwner } from "../../lib/auth";
+import { istDateKey } from "../../lib/datetime";
 
 export async function GET(req) {
   try {
@@ -44,14 +45,14 @@ export async function GET(req) {
       filterStart = startDate;
       filterEnd = endDate;
     } else {
-      const singleDate = date || new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+      const singleDate = date || istDateKey();
       filterStart = singleDate;
       filterEnd = singleDate;
     }
 
     // Filter paid orders in the date range
     const filteredOrders = paidOrders.filter((o) => {
-      const orderDate = new Date(o.created_at).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+      const orderDate = istDateKey(new Date(o.created_at));
       return orderDate >= filterStart && orderDate <= filterEnd;
     });
 

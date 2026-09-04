@@ -3,14 +3,14 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "../../context/CartContext";
+import { formatTimeIST, formatDateIST, istDateKey } from "../../lib/datetime";
 
-const getISTDate = (d = new Date()) => d.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
 
 function getPresetRange(preset) {
   const now = new Date();
   const istStr = now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
   const ist = new Date(istStr);
-  const today = getISTDate(now);
+  const today = istDateKey(now);
   const dayOfWeek = ist.getDay();
 
   switch (preset) {
@@ -87,14 +87,8 @@ export default function HistoryPage() {
     const val = e.target.value;
     setCustomDate(val);
     setActivePreset("custom");
-    setDateRange({ start: val, end: val, label: formatDate(val) });
+    setDateRange({ start: val, end: val, label: formatDateIST(val) });
   };
-
-  const formatTime = (dateStr) =>
-    new Date(dateStr).toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hour12: true });
-
-  const formatDate = (dateStr) =>
-    new Date(dateStr).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" });
 
   const handleEditOrder = (order) => {
     const cartItems = order.items.map((item) => ({ ...item, key: `${item.id}-${item.variant}` }));
@@ -129,8 +123,8 @@ export default function HistoryPage() {
   ];
 
   const rangeLabel = dateRange.start === dateRange.end
-    ? (activePreset === "today" ? "Today" : formatDate(dateRange.start))
-    : `${formatDate(dateRange.start)} – ${formatDate(dateRange.end)}`;
+    ? (activePreset === "today" ? "Today" : formatDateIST(dateRange.start))
+    : `${formatDateIST(dateRange.start)} – ${formatDateIST(dateRange.end)}`;
 
   return (
     <div className="page dashboard-page">
@@ -150,7 +144,7 @@ export default function HistoryPage() {
         </div>
         <div className="filter-custom">
           <label htmlFor="hist-date">Custom date</label>
-          <input id="hist-date" type="date" value={customDate} onChange={handleCustomDate} max={getISTDate()} />
+          <input id="hist-date" type="date" value={customDate} onChange={handleCustomDate} max={istDateKey()} />
         </div>
       </div>
 
@@ -180,7 +174,7 @@ export default function HistoryPage() {
                       )}
                       {order.order_id}
                     </div>
-                    <div className="order-card-time">{formatTime(order.created_at)}</div>
+                    <div className="order-card-time">{formatTimeIST(order.created_at)}</div>
                   </div>
                   <div className="order-card-body">
                     <div className="order-card-customer">

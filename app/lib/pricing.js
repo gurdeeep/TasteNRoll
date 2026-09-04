@@ -102,8 +102,14 @@ export function repriceCart(rawItems) {
     // The display name comes from the menu, not the request. Add-on lines are
     // not in the index, so fall back to the submitted name for those only —
     // and even then it is only a label; the price above is ours.
+    //
+    // That fallback is the single piece of customer text we persist, and it is
+    // later rendered into the owner's HTML report email. Strip anything that
+    // could be markup so the value is inert wherever it ends up.
     const known = index().get(id);
-    const name = known ? known.item.name : String(raw?.name ?? "Add-on").slice(0, 80);
+    const name = known
+      ? known.item.name
+      : String(raw?.name ?? "Add-on").replace(/[<>&"'`]/g, "").trim().slice(0, 80) || "Add-on";
 
     items.push({ id, name, variant, price, qty, key: `${id}-${variant}` });
     subtotal += price * qty;

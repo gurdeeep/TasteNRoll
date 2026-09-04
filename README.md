@@ -72,7 +72,7 @@ npm run dev
 | `npm run check-setup` | Verifies env vars, tables and columns |
 | `npm run gen-secret` | Prints a new `JWT_SECRET` |
 | `npm run gen-secret -- "pw"` | Prints an `OWNER_PASSWORD_HASH` for that password |
-| `npm test` | Checks the server-side pricing, UPI and phone helpers |
+| `npm test` | Pricing, UPI and phone helpers; sales report output; authorisation and input-trust checks |
 
 ---
 
@@ -130,6 +130,8 @@ already in `package.json` for exactly this reason).
 | Price tampering | Online orders are re-priced server-side from `app/data/menu.js`. The price in the request is discarded entirely. |
 | Cross-customer reads | Every customer query is scoped by `customer_id` from the token, never by a URL parameter. Guessing another order id returns 404. |
 | Session revocation | `customers.token_version` is baked into the token. Bump it in the database and every token issued before the bump stops working. |
+| Scheduled reports | `/api/cron/*` require the `CRON_SECRET` bearer token or a signed-in owner. A missing secret disables the endpoints rather than opening them. |
+| Browser headers | CSP, `frame-ancestors 'none'`, `nosniff`, `Referrer-Policy`, `Permissions-Policy` and HSTS are set in `next.config.mjs`. API responses are `no-store`. |
 | Realtime | RLS denies the anon key everything. The owner's browser upgrades its websocket with a short-lived token signed with `SUPABASE_JWT_SECRET`. |
 
 ---

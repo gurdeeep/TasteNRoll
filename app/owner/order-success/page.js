@@ -11,100 +11,11 @@ import {
   SHOP_TAGLINE,
 } from "../../data/shop";
 
-function ReceiptContent() {
-  const params = useSearchParams();
-  const router = useRouter();
-  const { setCart, setDiscount } = useCart();
-  const orderId = params.get("id") || "N/A";
-  const method = params.get("method") || "Cash";
-  const [order, setOrder] = useState(null);
-  const [viewMode, setViewMode] = useState("bill"); // screen view: 'kitchen' or 'bill'
-  const [printTarget, setPrintTarget] = useState("kitchen"); // what to print: 'kitchen' or 'bill'
-  const autoPrintDone = useRef(false);
-
-  useEffect(() => {
-    try {
-      const stored = sessionStorage.getItem("lastOrder");
-      if (stored) setOrder(JSON.parse(stored));
-    } catch {}
-  }, []);
-
-  // Auto-print kitchen slip once when order loads
-  useEffect(() => {
-    if (order && !autoPrintDone.current) {
-      autoPrintDone.current = true;
-      setPrintTarget("kitchen");
-      setTimeout(() => {
-        window.print();
-      }, 600);
-    }
-  }, [order]);
-
-  const ownerPhone = process.env.NEXT_PUBLIC_OWNER_PHONE || "";
-
-  // Build WhatsApp message text
-  const buildSlipText = () => {
-    if (!order) return "";
-    let text = `🥡 *${SHOP_NAME}*\n`;
-    text += `━━━━━━━━━━━━━━━\n`;
-    text += `📋 *Order Slip*\n`;
-    text += `🆔 ${orderId}\n`;
-    text += `📅 ${order.time}\n`;
-    text += `👤 ${order.customer.name}\n`;
-    text += `📞 ${order.customer.phone}\n`;
-    text += `━━━━━━━━━━━━━━━\n`;
-    order.items.forEach((item) => {
-      text += `▸ ${item.name} (${item.variant}) ×${item.qty} — ₹${item.price * item.qty}\n`;
-    });
-    text += `━━━━━━━━━━━━━━━\n`;
-    if (order.discountPercent && order.discountAmount) {
-      text += `📋 Subtotal: ₹${order.subtotal}\n`;
-      text += `🏷️ Discount (${order.discountPercent}%): −₹${order.discountAmount}\n`;
-    }
-    text += `💰 *Total: ₹${order.total}*\n`;
-    text += `💳 Payment: ${method}\n`;
-    text += `━━━━━━━━━━━━━━━\n`;
-    text += `Thank you! Visit again 🙏`;
-    return text;
-  };
-
-  const sendWhatsApp = (phone) => {
-    const text = encodeURIComponent(buildSlipText());
-    let cleanPhone = phone.replace(/\D/g, "");
-    if (cleanPhone.startsWith("0")) cleanPhone = "91" + cleanPhone.slice(1);
-    if (!cleanPhone.startsWith("91") && cleanPhone.length === 10) cleanPhone = "91" + cleanPhone;
-    window.open(`https://wa.me/${cleanPhone}?text=${text}`, "_blank");
-  };
-
-  // Print kitchen slip
-  const printKitchen = () => {
-    setPrintTarget("kitchen");
-    setTimeout(() => window.print(), 50);
-  };
-
-  // Print customer bill
-  const printBill = () => {
-    setPrintTarget("bill");
-    setTimeout(() => window.print(), 50);
-  };
-
-  // Edit order: load items back to cart, navigate to cart
-  const handleEditOrder = () => {
-    if (!order) return;
-    const cartItems = order.items.map((item) => ({
-      ...item,
-      key: `${item.id}-${item.variant}`,
-    }));
-    setCart(cartItems);
-    if (order.discountPercent) {
-      setDiscount(order.discountPercent);
-    }
-    sessionStorage.setItem("editingOrderId", orderId);
-    router.push("/owner/cart");
-  };
-
-  // Kitchen Slip Component (reusable)
-  const KitchenSlip = () => (
+// The receipt is rendered twice: a kitchen slip and a customer bill. CSS
+// decides which one the printer gets. Both live at module scope so React
+// keeps one instance instead of remounting them on every render.
+function KitchenSlip({ order, orderId }) {
+  return (
     <div className="receipt receipt-kitchen-content">
       <div className="receipt-header">
         <h2>🍳 KITCHEN ORDER</h2>
@@ -149,9 +60,10 @@ function ReceiptContent() {
       </div>
     </div>
   );
+}
 
-  // Full Bill Component (reusable)
-  const FullBill = () => (
+function FullBill({ order, orderId, method }) {
+  return (
     <div className="receipt receipt-bill-content">
       <div className="receipt-header">
         <h2>🥡 {SHOP_NAME}</h2>
@@ -250,6 +162,100 @@ function ReceiptContent() {
       </div>
     </div>
   );
+}
+function ReceiptContent() {
+  const params = useSearchParams();
+  const router = useRouter();
+  const { setCart, setDiscount } = useCart();
+  const orderId = params.get("id") || "N/A";
+  const method = params.get("method") || "Cash";
+  const [order, setOrder] = useState(null);
+  const [viewMode, setViewMode] = useState("bill"); // screen view: 'kitchen' or 'bill'
+  const [printTarget, setPrintTarget] = useState("kitchen"); // what to print: 'kitchen' or 'bill'
+  const autoPrintDone = useRef(false);
+
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem("lastOrder");
+      if (stored) setOrder(JSON.parse(stored));
+    } catch {}
+  }, []);
+
+  // Auto-print kitchen slip once when order loads
+  useEffect(() => {
+    if (order && !autoPrintDone.current) {
+      autoPrintDone.current = true;
+      setPrintTarget("kitchen");
+      setTimeout(() => {
+        window.print();
+      }, 600);
+    }
+  }, [order]);
+
+  const ownerPhone = process.env.NEXT_PUBLIC_OWNER_PHONE || "";
+
+  // Build WhatsApp message text
+  const buildSlipText = () => {
+    if (!order) return "";
+    let text = `🥡 *${SHOP_NAME}*\n`;
+    text += `━━━━━━━━━━━━━━━\n`;
+    text += `📋 *Order Slip*\n`;
+    text += `🆔 ${orderId}\n`;
+    text += `📅 ${order.time}\n`;
+    text += `👤 ${order.customer.name}\n`;
+    text += `📞 ${order.customer.phone}\n`;
+    text += `━━━━━━━━━━━━━━━\n`;
+    order.items.forEach((item) => {
+      text += `▸ ${item.name} (${item.variant}) ×${item.qty} — ₹${item.price * item.qty}\n`;
+    });
+    text += `━━━━━━━━━━━━━━━\n`;
+    if (order.discountPercent && order.discountAmount) {
+      text += `📋 Subtotal: ₹${order.subtotal}\n`;
+      text += `🏷️ Discount (${order.discountPercent}%): −₹${order.discountAmount}\n`;
+    }
+    text += `💰 *Total: ₹${order.total}*\n`;
+    text += `💳 Payment: ${method}\n`;
+    text += `━━━━━━━━━━━━━━━\n`;
+    text += `Thank you! Visit again 🙏`;
+    return text;
+  };
+
+  const sendWhatsApp = (phone) => {
+    const text = encodeURIComponent(buildSlipText());
+    let cleanPhone = phone.replace(/\D/g, "");
+    if (cleanPhone.startsWith("0")) cleanPhone = "91" + cleanPhone.slice(1);
+    if (!cleanPhone.startsWith("91") && cleanPhone.length === 10) cleanPhone = "91" + cleanPhone;
+    window.open(`https://wa.me/${cleanPhone}?text=${text}`, "_blank");
+  };
+
+  // Print kitchen slip
+  const printKitchen = () => {
+    setPrintTarget("kitchen");
+    setTimeout(() => window.print(), 50);
+  };
+
+  // Print customer bill
+  const printBill = () => {
+    setPrintTarget("bill");
+    setTimeout(() => window.print(), 50);
+  };
+
+  // Edit order: load items back to cart, navigate to cart
+  const handleEditOrder = () => {
+    if (!order) return;
+    const cartItems = order.items.map((item) => ({
+      ...item,
+      key: `${item.id}-${item.variant}`,
+    }));
+    setCart(cartItems);
+    if (order.discountPercent) {
+      setDiscount(order.discountPercent);
+    }
+    sessionStorage.setItem("editingOrderId", orderId);
+    router.push("/owner/cart");
+  };
+
+
 
   return (
     <div className="success-page">
@@ -260,11 +266,11 @@ function ReceiptContent() {
       <div className="print-container" data-print-target={printTarget}>
         {/* Kitchen slip: hidden on screen, visible in print when target=kitchen */}
         <div className={`print-slip print-slip-kitchen ${viewMode === "kitchen" ? "" : "screen-hidden"}`}>
-          <KitchenSlip />
+          <KitchenSlip order={order} orderId={orderId} />
         </div>
         {/* Customer bill: hidden on screen when viewing kitchen, visible in print when target=bill */}
         <div className={`print-slip print-slip-bill ${viewMode === "bill" ? "" : "screen-hidden"}`}>
-          <FullBill />
+          <FullBill order={order} orderId={orderId} method={method} />
         </div>
       </div>
 

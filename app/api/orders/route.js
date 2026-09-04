@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "../../lib/supabase";
 import { requireOwner, getSession } from "../../lib/auth";
+import { istDateKey } from "../../lib/datetime";
 
 // This is the POS endpoint: creating, editing and deleting orders at the
 // counter. Every method is owner-only. The proxy already redirects browsers,
@@ -23,7 +24,7 @@ export async function POST(req) {
     const supabase = createServerClient();
 
     // Calculate daily order number (resets each day)
-    const todayIST = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+    const todayIST = istDateKey();
     const startOfDay = `${todayIST}T00:00:00+05:30`;
     const endOfDay = `${todayIST}T23:59:59+05:30`;
 

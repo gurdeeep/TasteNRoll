@@ -17,7 +17,8 @@ function OwnerLoginForm() {
 
   const nextParam = params.get("next");
   const destination =
-    nextParam && nextParam.startsWith("/") && !nextParam.startsWith("//")
+    nextParam &&
+    /^\/(?![/\\])/.test(nextParam) // same-site path only: rejects "//evil" and "/\evil"
       ? nextParam
       : "/owner/live";
 

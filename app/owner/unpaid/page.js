@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "../../context/CartContext";
+import { formatTimeIST, formatShortDateIST } from "../../lib/datetime";
 
 export default function UnpaidPage() {
   const [orders, setOrders] = useState([]);
@@ -31,12 +32,6 @@ export default function UnpaidPage() {
   useEffect(() => {
     fetchUnpaid();
   }, []);
-
-  const formatTime = (dateStr) =>
-    new Date(dateStr).toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hour12: true });
-
-  const formatDate = (dateStr) =>
-    new Date(dateStr).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short" });
 
   const handleMarkPaid = async (orderId, method, cashAmt = 0, upiAmt = 0) => {
     try {
@@ -160,8 +155,8 @@ export default function UnpaidPage() {
                   {order.order_id}
                 </div>
                 <div className="unpaid-card-meta">
-                  <span className="unpaid-card-date">{formatDate(order.created_at)}</span>
-                  <span className="unpaid-card-time">{formatTime(order.created_at)}</span>
+                  <span className="unpaid-card-date">{formatShortDateIST(order.created_at)}</span>
+                  <span className="unpaid-card-time">{formatTimeIST(order.created_at)}</span>
                 </div>
               </div>
 

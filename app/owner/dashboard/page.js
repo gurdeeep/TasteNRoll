@@ -1,13 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
-
-const getISTDate = (d = new Date()) => d.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+import { istDateKey } from "../../lib/datetime";
 
 function getPresetRange(preset) {
   const now = new Date();
   const istStr = now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
   const ist = new Date(istStr);
-  const today = getISTDate(now);
+  const today = istDateKey(now);
   const dayOfWeek = ist.getDay();
 
   switch (preset) {
@@ -94,14 +93,11 @@ export default function DashboardPage() {
     setDateRange({ start: val, end: val });
   };
 
-  const formatDate = (dateStr) =>
-    new Date(dateStr).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" });
-
   // Report functions
   const fetchReport = async () => {
     setReportLoading(true);
     try {
-      const date = dateRange.start === dateRange.end ? dateRange.start : getISTDate();
+      const date = dateRange.start === dateRange.end ? dateRange.start : istDateKey();
       const res = await fetch(`/api/report?date=${date}`);
       const data = await res.json();
       if (data.success) {
@@ -159,7 +155,7 @@ export default function DashboardPage() {
         </div>
         <div className="filter-custom">
           <label htmlFor="date-select">Custom date</label>
-          <input id="date-select" type="date" value={customDate} onChange={handleCustomDate} max={getISTDate()} />
+          <input id="date-select" type="date" value={customDate} onChange={handleCustomDate} max={istDateKey()} />
         </div>
       </div>
 

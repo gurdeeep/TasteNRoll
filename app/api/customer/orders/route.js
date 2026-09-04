@@ -4,6 +4,7 @@ import { requireCustomer } from "../../../lib/auth";
 import { repriceCart } from "../../../lib/pricing";
 import { makeTxnRef } from "../../../lib/upi";
 import { PAYMENT, FULFILLMENT, ACCOUNTING, ORDER_TYPES } from "../../../lib/orderStatus";
+import { istDateKey } from "../../../lib/datetime";
 
 // ---------------------------------------------------------------------------
 // POST /api/customer/orders  — place an online order.
@@ -41,7 +42,7 @@ export async function POST(req) {
 
     const supabase = createServerClient();
 
-    const todayIST = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+    const todayIST = istDateKey();
     const { count } = await supabase
       .from("orders")
       .select("*", { count: "exact", head: true })

@@ -72,5 +72,8 @@ function deny(request, loginPath, attempted) {
 
 export const config = {
   // Skip Next's own assets and static files; everything else is inspected.
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|brand|items|.*\.(?:png|jpg|jpeg|svg|gif|webp|ico)$).*)"],
+  // Note the doubled backslashes: this is a JS string, so "\\." is what
+  // reaches the regex engine as an escaped dot. A single "\." would collapse
+  // to a plain "." and match any character.
+  matcher: ["/((?!_next/static|_next/image|favicon\\.ico|brand|items|.*\\.(?:png|jpg|jpeg|svg|gif|webp|ico)$).*)"],
 };

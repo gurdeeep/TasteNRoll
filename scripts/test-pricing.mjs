@@ -19,11 +19,24 @@ check("half/full item, full", priceFor("vr7", "full"), 150);
 check("single-price category (burger)", priceFor("bg1", "regular"), 60);
 // "regular" means item.price on a single-price category but item.regular on a
 // three-size one. Both shapes must resolve, or pizzas price as null.
-check("triple-size, regular", priceFor("bp1", "regular"), 99);
-check("triple-size, medium", priceFor("bp1", "medium"), 190);
-check("triple-size, large", priceFor("bp1", "large"), 280);
+check("triple-size, regular", priceFor("bp1", "regular"), 100);
+check("triple-size, medium", priceFor("bp1", "medium"), 220);
+check("triple-size, large", priceFor("bp1", "large"), 340);
 check("dual-label, option1", priceFor("ng1", "option1"), 150);
 check("dual-label, option2", priceFor("ng1", "option2"), 260);
+
+// The 2026 menu reshaped several categories. These pin the new shapes so a
+// future menu edit cannot quietly reintroduce a removed item or column.
+check("momos row is a flavour, columns are Steam/Kurkure", priceFor("mm2", "option1"), 110);
+check("momos kurkure column", priceFor("mm2", "option2"), 140);
+check("cheese corn momos was added", priceFor("mm5", "option1"), 130);
+check("chinese special is single-price now", priceFor("cs1", "regular"), 150);
+check("chinese special no longer sells halves", priceFor("cs1", "half"), null);
+check("honey chilli potato was withdrawn", priceFor("cs2", "regular"), null);
+check("spring rolls are their own category", priceFor("sr2", "regular"), 180);
+check("combo pizza folded into basic pizza", priceFor("cp1", "large"), 430);
+check("fried momos was withdrawn", priceFor("mm1", "option3"), null);
+check("malai pan fried was withdrawn", priceFor("pfm3", "regular"), null);
 check("bare add-on id is not a menu item", priceFor("ao1", "regular"), null);
 check("unknown item", priceFor("nope", "full"), null);
 check("wrong variant for item", priceFor("vr7", "large"), null);

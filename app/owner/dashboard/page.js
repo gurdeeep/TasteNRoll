@@ -45,11 +45,12 @@ function getPresetRange(preset) {
   }
 }
 
-// Access is no longer a passcode typed into the page. Everything under /owner
-// is behind an owner JWT, checked by proxy.js before this renders and again by
-// /api/dashboard when it is called - so by the time this component runs, the
-// visitor is already the owner.
+// Access is behind an owner JWT (checked by proxy.js), PLUS a per-visit
+// passcode gate so the dashboard can't be left open accidentally.
 export default function DashboardPage() {
+  const [authenticated, setAuthenticated] = useState(false);
+  const [passInput, setPassInput] = useState("");
+  const [passError, setPassError] = useState("");
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activePreset, setActivePreset] = useState("today");
@@ -59,28 +60,78 @@ export default function DashboardPage() {
   const [reportText, setReportText] = useState("");
   const [showReport, setShowReport] = useState(false);
 
-
-
-  const fetchDashboard = async (start, end) => {
-    setLoading(true);
+  const handlePassSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const res = await fetch(`/api/dashboard?startDate=${start}&endDate=${end}`);
+      const res = await fetch("/api/auth/dashboard", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: passInput }),
+      });
       const data = await res.json();
       if (data.success) {
-        setStats(data.stats);
+        setAuthenticated(true);
+        setPassError("");
+      } else {
+        setPassError("Wrong password");
       }
-    } catch (err) {
-      console.error("Failed to fetch dashboard:", err);
-    } finally {
-      setLoading(false);
+    } catch {
+      setPassError("Error verifying password");
     }
   };
 
   useEffect(() => {
-    fetchDashboard(dateRange.start, dateRange.end);
-  }, [dateRange]);
+    if (!authenticated) return;
+
+    const controller = new AbortController();
+    fetch(`/api/dashboard?startDate=${dateRange.start}&endDate=${dateRange.end}`, {
+      signal: controller.signal,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) setStats(data.stats);
+      })
+      .catch((err) => {
+        if (err.name !== "AbortError") console.error("Failed to fetch dashboard:", err);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+
+    return () => controller.abort();
+  }, [authenticated, dateRange.start, dateRange.end]);
+
+  if (!authenticated) {
+    return (
+      <div className="checkout-page" style={{ textAlign: "center", paddingTop: "10rem" }}>
+        <h2>🔒 Dashboard Access</h2>
+        <p style={{ color: "var(--text-secondary)", marginTop: "0.5rem", marginBottom: "1.5rem" }}>
+          Enter dashboard password
+        </p>
+        <form onSubmit={handlePassSubmit} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.75rem" }}>
+          <input
+            type="password"
+            value={passInput}
+            onChange={(e) => setPassInput(e.target.value)}
+            placeholder="Password"
+            autoFocus
+            style={{
+              padding: "0.75rem 1rem", borderRadius: "8px", border: "1px solid var(--border)",
+              background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: "1rem",
+              width: "200px", textAlign: "center",
+            }}
+          />
+          {passError && <p style={{ color: "#ef4444", fontSize: "0.875rem" }}>{passError}</p>}
+          <button type="submit" className="btn-primary" style={{ padding: "0.6rem 2rem" }}>
+            Unlock
+          </button>
+        </form>
+      </div>
+    );
+  }
 
   const handlePreset = (preset) => {
+    setLoading(true);
     setActivePreset(preset);
     setCustomDate("");
     setDateRange(getPresetRange(preset));
@@ -88,6 +139,7 @@ export default function DashboardPage() {
 
   const handleCustomDate = (e) => {
     const val = e.target.value;
+    setLoading(true);
     setCustomDate(val);
     setActivePreset("custom");
     setDateRange({ start: val, end: val });

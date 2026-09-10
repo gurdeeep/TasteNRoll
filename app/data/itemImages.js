@@ -4,7 +4,7 @@
 // menu.js automatically gets artwork — no second list to keep in sync.
 // Resolution order per item: name keyword → category default → generic fallback.
 
-import { menuData } from "./menu";
+import { menuData } from "./menu.js";
 
 const BASE = "/items";
 
@@ -24,11 +24,10 @@ const CATEGORY_IMAGE = {
   "chinese-special": "chinese",
   nuggets: "nuggets",
   momos: "momos-steam",
-  "cheese-mushroom-momos": "momos-steam",
   "pan-fried-momos": "momos-fried",
+  "spring-rolls": "chinese",
   "basic-pizza": "pizza",
   "amazing-pizza": "pizza",
-  "combo-pizza": "pizza",
   mojitos: "mojito",
   beverages: "shake",
   "soft-drinks": "softdrink",
@@ -47,8 +46,6 @@ const NAME_KEYWORDS = [
 
 // Categories where a name keyword may override the category default.
 const KEYWORD_CATEGORIES = new Set([
-  "momos",
-  "cheese-mushroom-momos",
   "pan-fried-momos",
   "beverages",
   "veg-rolls",

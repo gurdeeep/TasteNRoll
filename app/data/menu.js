@@ -1,5 +1,5 @@
-// Complete menu data for Taste N' RoLLs cafe
-// Extracted from actual menu images
+// Menu data for Taste N' RoLLs, transcribed from the printed menu
+// (Taste_N_Rolls_Menu_Final.pdf, pages 2-5).
 
 export const menuData = [
   {
@@ -149,13 +149,11 @@ export const menuData = [
     name: "Chinese Special",
     icon: "🥡",
     description: "Indo-Chinese delicacies with bold spices",
-    type: "half-full",
+    type: "single",
     items: [
-      { id: "cs1", name: "Chilli Potato", half: 100, full: 150, veg: true },
-      { id: "cs2", name: "Honey Chilli Potato", half: 120, full: 170, veg: true },
-      { id: "cs3", name: "Chilli Paneer (Dry)", half: 180, full: 260, veg: true },
-      { id: "cs4", name: "Chilli Paneer (Gravy)", half: 200, full: 280, veg: true },
-      { id: "cs5", name: "KFC Style Veggie Spring Roll", half: null, full: 140, veg: true },
+      { id: "cs1", name: "Chilli Potato", price: 150, veg: true },
+      { id: "cs3", name: "Chilli Paneer (Dry)", price: 260, veg: true },
+      { id: "cs4", name: "Chilli Paneer (Gravy)", price: 280, veg: true },
     ],
   },
   {
@@ -173,40 +171,37 @@ export const menuData = [
     id: "momos",
     name: "Momos",
     icon: "🥟",
-    description: "Steamed & fried momos with spicy chutney",
+    description: "Eight pieces a plate, steamed or kurkure-fried",
     type: "dual-label",
-    labels: ["Veg", "Paneer"],
+    labels: ["Steam", "Kurkure"],
     items: [
-      { id: "mm1", name: "Steam Momos", price1: 90, price2: 110, veg: true },
-      { id: "mm2", name: "Fried Momos", price1: 100, price2: 120, veg: true },
-      { id: "mm3", name: "Kurkure Momos", price1: 120, price2: 140, veg: true },
+      { id: "mm1", name: "Veg Momos", price1: 90, price2: 120, veg: true },
+      { id: "mm2", name: "Paneer Momos", price1: 110, price2: 140, veg: true },
+      { id: "mm3", name: "Cheese Veggie Momos", price1: 130, price2: 160, veg: true },
+      { id: "mm4", name: "Mushroom Momos", price1: 130, price2: 160, veg: true },
+      { id: "mm5", name: "Cheese Corn Momos", price1: 130, price2: 160, veg: true },
     ],
   },
   {
-    id: "cheese-mushroom-momos",
-    name: "Cheese & Mushroom Momos",
-    icon: "🥟",
-    description: "Cheese veggie & mushroom momos, 8 pieces a plate",
-    type: "dual-label",
-    labels: ["Cheese Veggie", "Mushroom"],
+    id: "spring-rolls",
+    name: "Spring Rolls",
+    icon: "🥠",
+    description: "3 pieces, cut into 6",
+    type: "single",
     items: [
-      { id: "cmm1", name: "Steam Momos", price1: 130, price2: 130, veg: true },
-      { id: "cmm2", name: "Kurkure Momos", price1: 160, price2: 160, veg: true },
+      { id: "sr1", name: "KFC Style Veggie Spring Roll", price: 140, veg: true },
+      { id: "sr2", name: "KFC Style Paneer Spring Roll", price: 180, veg: true },
     ],
   },
   {
     id: "pan-fried-momos",
     name: "Pan Fried Momos",
     icon: "🥟",
-    description: "Pan fried momos with bold flavors",
+    description: "Served in tandoori gravy, 7 pieces",
     type: "single",
     items: [
-      { id: "pfm1", name: "Veg Chilli Pan Fried Momos", price: 120, veg: true },
-      { id: "pfm2", name: "Veg Tandoori Pan Fried Momos", price: 150, veg: true },
-      { id: "pfm3", name: "Veg Malai Pan Fried Momos", price: 150, veg: true },
-      { id: "pfm4", name: "Paneer Chilli Pan Fried Momos", price: 160, veg: true },
+      { id: "pfm2", name: "Veggie Tandoori Pan Fried Momos", price: 150, veg: true },
       { id: "pfm5", name: "Paneer Tandoori Pan Fried Momos", price: 180, veg: true },
-      { id: "pfm6", name: "Paneer Malai Pan Fried Momos", price: 180, veg: true },
     ],
   },
   {
@@ -217,20 +212,28 @@ export const menuData = [
     type: "triple-size",
     labels: ["Regular (4 Slice)", "Medium (6 Slice)", "Large (8 Slice)"],
     items: [
-      { id: "bp1", name: "Onion", regular: 99, medium: 190, large: 280, veg: true },
-      { id: "bp2", name: "Capsicum", regular: 99, medium: 190, large: 280, veg: true },
-      { id: "bp3", name: "Tomato", regular: 99, medium: 190, large: 280, veg: true },
-      { id: "bp4", name: "Sweet Corn", regular: 99, medium: 220, large: 300, veg: true },
-      { id: "bp5", name: "Onion + Capsicum", regular: 109, medium: 239, large: 339, veg: true },
-      { id: "bp6", name: "Onion + Mushroom", regular: 109, medium: 239, large: 339, veg: true },
-      { id: "bp7", name: "Onion + Tomato", regular: 109, medium: 239, large: 339, veg: true },
-      { id: "bp8", name: "Capsicum + Tomato", regular: 109, medium: 239, large: 339, veg: true },
-      { id: "bp9", name: "Onion + Paneer", regular: 119, medium: 249, large: 359, veg: true },
-      { id: "bp10", name: "Peppy Paneer", regular: 119, medium: 249, large: 369, veg: true },
-      { id: "bp11", name: "Capsicum + Paneer", regular: 129, medium: 259, large: 379, veg: true },
-      { id: "bp12", name: "Onion + Golden Corn", regular: 109, medium: 249, large: 359, veg: true },
-      { id: "bp13", name: "Capsicum + Golden Corn", regular: 119, medium: 239, large: 369, veg: true },
-      { id: "bp14", name: "Paneer + Golden Corn", regular: 129, medium: 259, large: 379, veg: true },
+      { id: "bp1", name: "Onion", regular: 100, medium: 220, large: 340, veg: true },
+      { id: "bp2", name: "Capsicum", regular: 100, medium: 220, large: 340, veg: true },
+      { id: "bp3", name: "Tomato", regular: 100, medium: 220, large: 340, veg: true },
+      { id: "bp4", name: "Sweet Corn", regular: 100, medium: 220, large: 340, veg: true },
+      { id: "bp5", name: "Onion + Capsicum", regular: 120, medium: 260, large: 360, veg: true },
+      { id: "bp6", name: "Onion + Mushroom", regular: 120, medium: 260, large: 360, veg: true },
+      { id: "bp7", name: "Onion + Tomato", regular: 120, medium: 260, large: 360, veg: true },
+      { id: "bp8", name: "Capsicum + Tomato", regular: 120, medium: 260, large: 360, veg: true },
+      { id: "bp9", name: "Onion + Paneer", regular: 120, medium: 260, large: 360, veg: true },
+      { id: "bp10", name: "Peppy Paneer", regular: 120, medium: 260, large: 360, veg: true },
+      { id: "bp11", name: "Capsicum + Paneer", regular: 130, medium: 270, large: 370, veg: true },
+      { id: "bp12", name: "Onion + Golden Corn", regular: 120, medium: 260, large: 360, veg: true },
+      { id: "bp13", name: "Capsicum + Golden Corn", regular: 130, medium: 270, large: 370, veg: true },
+      { id: "bp14", name: "Paneer + Golden Corn", regular: 130, medium: 270, large: 370, veg: true },
+      // The five below were their own "Combo Pizza" category until the 2026
+      // menu folded them in. Their ids are kept so past orders still group
+      // under Pizza in the sales reports.
+      { id: "cp1", name: "Onion + Tomato + Capsicum", regular: 150, medium: 300, large: 430, veg: true },
+      { id: "cp2", name: "Tomato + Mushroom + Corn", regular: 150, medium: 300, large: 430, veg: true },
+      { id: "cp3", name: "Onion + Paneer + Corn", regular: 150, medium: 300, large: 430, veg: true },
+      { id: "cp4", name: "Onion + Paneer + Capsicum", regular: 150, medium: 300, large: 430, veg: true },
+      { id: "cp5", name: "Paneer + Corn + Capsicum", regular: 150, medium: 300, large: 430, veg: true },
     ],
   },
   {
@@ -241,27 +244,12 @@ export const menuData = [
     type: "triple-size",
     labels: ["Regular (4 Slice)", "Medium (6 Slice)", "Large (8 Slice)"],
     items: [
-      { id: "ap1", name: "Farm House Pizza", description: "Onion, capsicum, corn, paneer, tomato", regular: 159, medium: 309, large: 499, veg: true },
-      { id: "ap2", name: "Amazing Italian Pizza", description: "Capsicum, tomato, jalapeno, paneer, black olive, extra cheese", regular: 189, medium: 349, large: 549, veg: true },
-      { id: "ap3", name: "TNR Spl", description: "Baby corn, onion, capsicum, red paprika, black olives, jalapeno, paneer, extra cheese", regular: 199, medium: 369, large: 579, veg: true },
-      { id: "ap4", name: "Tandoori Bites Pizza", description: "Onion, corn, paneer, tandoori sauce", regular: 169, medium: 369, large: 499, veg: true },
-      { id: "ap5", name: "Makhani Paneer Pizza", description: "Makhani sauce, paneer, onion, capsicum", regular: 159, medium: 349, large: 479, veg: true },
-      { id: "ap6", name: "Spl Paneer Tandoori Pizza", description: "Spl tandoori, paneer, onion, corn, jalapeno, red paprika, extra cheese", regular: 189, medium: 399, large: 519, veg: true },
-    ],
-  },
-  {
-    id: "combo-pizza",
-    name: "Combo Pizza",
-    icon: "🍕",
-    description: "Multi-topping combo pizzas",
-    type: "triple-size",
-    labels: ["Regular (4 Slice)", "Medium (6 Slice)", "Large (8 Slice)"],
-    items: [
-      { id: "cp1", name: "Cheese + Onion + Tomato + Capsicum", regular: 149, medium: 299, large: 429, veg: true },
-      { id: "cp2", name: "Cheese + Tomato + Mushroom + Corn", regular: 149, medium: 299, large: 429, veg: true },
-      { id: "cp3", name: "Cheese + Onion + Paneer + Corn", regular: 149, medium: 299, large: 429, veg: true },
-      { id: "cp4", name: "Cheese + Onion + Paneer + Capsicum", regular: 149, medium: 299, large: 429, veg: true },
-      { id: "cp5", name: "Cheese + Paneer + Corn + Capsicum", regular: 149, medium: 299, large: 429, veg: true },
+      { id: "ap1", name: "Farm House Pizza", description: "Onion, capsicum, corn, paneer, tomato", regular: 160, medium: 330, large: 520, veg: true },
+      { id: "ap5", name: "Makhani Paneer Pizza", description: "Makhani sauce, paneer, onion, capsicum", regular: 160, medium: 350, large: 520, veg: true },
+      { id: "ap4", name: "Tandoori Bites Pizza", description: "Onion, corn, paneer, tandoori sauce", regular: 170, medium: 370, large: 530, veg: true },
+      { id: "ap2", name: "Amazing Italian Pizza", description: "Capsicum, tomato, jalapeno, paneer, black olive, extra cheese", regular: 190, medium: 370, large: 550, veg: true },
+      { id: "ap6", name: "Spl Paneer Tandoori Pizza", description: "Spl tandoori, paneer, onion, corn, jalapeno, red paprika, extra cheese", regular: 190, medium: 400, large: 560, veg: true },
+      { id: "ap3", name: "Taste n Rolls SPL", description: "Baby corn, onion, capsicum, red paprika, black olives, jalapeno, paneer, extra cheese", regular: 200, medium: 380, large: 570, veg: true },
     ],
   },
   {
@@ -313,7 +301,7 @@ export const menuData = [
       { id: "sd8", name: "Hell", price: 70, veg: true },
       { id: "sd9", name: "Coke Diet Can", price: 70, veg: true },
       { id: "sd10", name: "Monster", price: 120, veg: true },
-      { id: "sd11", name: "Red Bull", price: 125, veg: true },
+      { id: "sd11", name: "Red Bull", price: 120, veg: true },
     ],
   },
 ];
@@ -335,7 +323,7 @@ export const generalAddOns = [
 ];
 
 // IDs of pizza categories (used to trigger pizza add-on popup)
-export const pizzaCategoryIds = ["basic-pizza", "amazing-pizza", "combo-pizza"];
+export const pizzaCategoryIds = ["basic-pizza", "amazing-pizza"];
 
 // Menu structure — defines the order categories appear in and how they group.
 // "Rolls" is special: it holds several categories under one heading.
@@ -358,8 +346,9 @@ export const accordionMenu = [
   { id: "maggi", name: "Maggi", icon: "🍜", categories: ["maggi"] },
   { id: "chinese-special", name: "Chinese Special", icon: "🥡", categories: ["chinese-special"] },
   { id: "nuggets", name: "Nuggets", icon: "🍗", categories: ["nuggets"] },
-  { id: "momos-section", name: "Momos", icon: "🥟", categories: ["momos", "cheese-mushroom-momos", "pan-fried-momos"] },
-  { id: "pizza-section", name: "Pizza", icon: "🍕", categories: ["basic-pizza", "amazing-pizza", "combo-pizza"] },
+  { id: "momos-section", name: "Momos", icon: "🥟", categories: ["momos", "pan-fried-momos"] },
+  { id: "spring-rolls-section", name: "Spring Rolls", icon: "🥠", categories: ["spring-rolls"] },
+  { id: "pizza-section", name: "Pizza", icon: "🍕", categories: ["basic-pizza", "amazing-pizza"] },
   { id: "mojitos-section", name: "Mojitos", icon: "🍹", categories: ["mojitos"] },
   { id: "beverages-section", name: "Beverages", icon: "🧊", categories: ["beverages"] },
   { id: "soft-drinks-section", name: "Soft Drinks", icon: "🧃", categories: ["soft-drinks"] },

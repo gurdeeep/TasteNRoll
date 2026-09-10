@@ -44,7 +44,7 @@ const ORDERS = [
     discount_amount: 40,
     discount_applied: true,
     items: [
-      { id: "cmm1", name: "Steam Momos", variant: "option1", price: 130, qty: 2 },
+      { id: "mm3", name: "Cheese Veggie Momos", variant: "option1", price: 130, qty: 2 },
       { id: "zz9", name: "Mystery Item", variant: "regular", price: 0, qty: 1 },
     ],
   },

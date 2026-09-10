@@ -90,7 +90,7 @@ export default function Navbar({ links = [], role = "customer", homeHref = "/" }
             aria-hidden="true"
             priority
           />
-          Taste N&apos; RoLLs
+          <span className="navbar-brand-text">Taste N&apos; RoLLs</span>
           {role === "owner" && <span className="navbar-role-tag">Counter</span>}
         </Link>
 

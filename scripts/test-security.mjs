@@ -167,6 +167,39 @@ check("frame-ancestors is locked down", cfg.includes("frame-ancestors 'none'"));
 check("API responses are marked no-store", cfg.includes("no-store"));
 
 // ---------------------------------------------------------------------------
+section("Dashboard passcode gate remains safe and render-stable");
+// ---------------------------------------------------------------------------
+const dashboardPageSrc = readFileSync(
+  new URL("../app/owner/dashboard/page.js", import.meta.url),
+  "utf8"
+);
+const dashboardAuthSrc = readFileSync(
+  new URL("../app/api/auth/dashboard/route.js", import.meta.url),
+  "utf8"
+);
+check(
+  "dashboard gate renders only after hooks are declared",
+  dashboardPageSrc.indexOf('if (!authenticated) {\n    return') >
+    dashboardPageSrc.indexOf("useEffect(() =>")
+);
+check(
+  "dashboard data waits until the passcode is accepted",
+  dashboardPageSrc.includes("if (!authenticated) return;")
+);
+check(
+  "dashboard passcode endpoint requires an owner session",
+  dashboardAuthSrc.includes("await requireOwner()")
+);
+check(
+  "dashboard passcode has no shared fallback value",
+  !dashboardAuthSrc.includes('|| "1234"')
+);
+check(
+  "dashboard passcode comparison is timing safe",
+  dashboardAuthSrc.includes("timingSafeEqual")
+);
+
+// ---------------------------------------------------------------------------
 console.log(`\n${passed} passed, ${failed} failed.`);
 if (failed > 0) process.exit(1);
 console.log("All security checks passed.");

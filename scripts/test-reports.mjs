@@ -7,6 +7,12 @@
 // email while leaving the on-screen report alone (or vice versa).
 
 import { generateReport, buildItemCategoryMap } from "../app/lib/salesReport.js";
+import {
+  formatRangeLabelIST,
+  istDayStart,
+  istDayEnd,
+  parseDayKey,
+} from "../app/lib/datetime.js";
 
 let failures = 0;
 
@@ -96,6 +102,66 @@ const categoryById = buildItemCategoryMap();
 check("known item maps to its category", categoryById["vr7"].category, "Veg Rolls");
 check("category carries an icon for the report heading", typeof categoryById["vr7"].icon, "string");
 check("unknown id maps to nothing", categoryById["zz9"], undefined);
+
+// ---------------------------------------------------------------------------
+// The dashboard's date tabs feed this range straight through to the report.
+// It used to discard any multi-day range and report today instead, so every
+// weekly and monthly report came back as today's takings.
+// ---------------------------------------------------------------------------
+console.log("\nreport date ranges\n");
+
+check(
+  "a single day gets a full-date heading",
+  formatRangeLabelIST("2026-09-26", "2026-09-26"),
+  "Saturday, 26 September 2026"
+);
+check(
+  "a span is labelled with both ends and a day count",
+  formatRangeLabelIST("2026-09-21", "2026-09-27"),
+  "21 Sept 2026 – 27 Sept 2026 (7 days)"
+);
+check(
+  "a whole month counts its days",
+  formatRangeLabelIST("2026-08-01", "2026-08-31"),
+  "1 Aug 2026 – 31 Aug 2026 (31 days)"
+);
+
+// A heading that says "Daily" over a month of takings would be actively
+// misleading, so the title changes with the span.
+const oneDay = generateReport([], formatRangeLabelIST("2026-09-26", "2026-09-26"), "Daily Report");
+const oneWeek = generateReport([], formatRangeLabelIST("2026-09-21", "2026-09-27"), "Sales Report");
+check("single-day report is titled Daily", oneDay.text.includes("Daily Report"), true);
+check("multi-day report is not titled Daily", oneWeek.text.includes("Daily Report"), false);
+check("multi-day report is titled Sales", oneWeek.text.includes("Sales Report"), true);
+
+// The database filter must cover exactly one IST day, not one UTC day.
+check(
+  "a day starts at IST midnight",
+  new Date(istDayStart("2026-09-26")).toISOString(),
+  "2026-09-25T18:30:00.000Z"
+);
+check(
+  "a day ends just before the next IST midnight",
+  new Date(istDayEnd("2026-09-26")).toISOString(),
+  "2026-09-26T18:29:59.999Z"
+);
+
+// These values reach a database filter, so anything malformed is rejected.
+check("a real day key is accepted", parseDayKey("2026-09-26"), "2026-09-26");
+for (const bad of [
+  "2026-02-31", // matches the shape, is not a date
+  "2026-13-01",
+  "26-09-2026",
+  "2026-9-6",
+  "2026-09-26T00:00:00Z",
+  "",
+  null,
+  undefined,
+  12345,
+  "'; drop table orders; --",
+]) {
+  check(`rejects ${JSON.stringify(bad) ?? String(bad)}`, parseDayKey(bad), null);
+}
 
 console.log(`\n${failures === 0 ? "All checks passed." : failures + " check(s) FAILED."}\n`);
 if (failures > 0) process.exit(1);

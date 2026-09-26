@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { istDateKey } from "../../lib/datetime";
+import { istDateKey, formatDateIST } from "../../lib/datetime";
 
 function getPresetRange(preset) {
   const now = new Date();
@@ -139,24 +139,33 @@ export default function DashboardPage() {
 
   const handleCustomDate = (e) => {
     const val = e.target.value;
+    if (!val) return;
     setLoading(true);
     setCustomDate(val);
     setActivePreset("custom");
-    setDateRange({ start: val, end: val });
+    // The label matters: the stat cards read "{label} Revenue", and without one
+    // they rendered as a bare " Revenue".
+    setDateRange({ start: val, end: val, label: formatDateIST(val) });
   };
 
-  // Report functions
+  // Builds the report for whichever range the tabs are currently showing, so
+  // "This Week" reports the week. This used to fall back to today's date for
+  // any multi-day range, which meant every weekly and monthly report silently
+  // came back as today's takings.
   const fetchReport = async () => {
     setReportLoading(true);
     try {
-      const date = dateRange.start === dateRange.end ? dateRange.start : istDateKey();
-      const res = await fetch(`/api/report?date=${date}`);
+      const params = new URLSearchParams({
+        startDate: dateRange.start,
+        endDate: dateRange.end,
+      });
+      const res = await fetch(`/api/report?${params}`);
       const data = await res.json();
       if (data.success) {
         setReportText(data.text);
         setShowReport(true);
       } else {
-        alert("Failed to generate report");
+        alert(data.error || "Failed to generate report");
       }
     } catch {
       alert("Error generating report");
@@ -251,17 +260,20 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Daily Report */}
+          {/* The report always covers the range the tabs above are showing,
+              so the button says which one that is. */}
           <div className="report-section">
             <button className="report-btn" onClick={fetchReport} disabled={reportLoading}>
-              {reportLoading ? "Generating…" : "📊 Generate Daily Report"}
+              {reportLoading
+                ? "Generating…"
+                : `📊 Generate Report — ${dateRange.label}`}
             </button>
 
             {showReport && (
               <div className="report-modal">
                 <div className="report-modal-content">
                   <div className="report-modal-header">
-                    <h3>📊 Daily Report</h3>
+                    <h3>📊 {dateRange.label} Report</h3>
                     <button className="report-close" onClick={() => setShowReport(false)}>✕</button>
                   </div>
                   <pre className="report-text">{reportText}</pre>

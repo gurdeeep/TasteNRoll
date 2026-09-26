@@ -49,3 +49,49 @@ export function formatShortDateIST(dateStr) {
     month: "short",
   });
 }
+
+// "Saturday, 26 September 2026" — the heading of a single-day sales report.
+export function formatLongDateIST(dateStr) {
+  return new Date(dateStr).toLocaleDateString("en-IN", {
+    timeZone: IST,
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+// The heading of a sales report, which may cover one day or a span of them.
+// Both arguments are YYYY-MM-DD day keys as produced by istDateKey().
+export function formatRangeLabelIST(startKey, endKey) {
+  if (startKey === endKey) return formatLongDateIST(startKey);
+
+  // Day keys are ISO-ordered, so this subtraction is safe without parsing.
+  const days =
+    Math.round((new Date(endKey) - new Date(startKey)) / 86400000) + 1;
+  return `${formatDateIST(startKey)} – ${formatDateIST(endKey)} (${days} days)`;
+}
+
+// The IST instant a day key starts and ends at. India has no daylight saving,
+// so the +05:30 offset is correct year-round and Postgres can do the filtering
+// itself rather than the server pulling every row and comparing in JS.
+export function istDayStart(dayKey) {
+  return `${dayKey}T00:00:00+05:30`;
+}
+
+export function istDayEnd(dayKey) {
+  return `${dayKey}T23:59:59.999+05:30`;
+}
+
+// Validates a day key arriving from a query string before it reaches a database
+// filter. Returns the key, or null for anything that is not a real calendar
+// date — including values like "2026-02-31", which look right but are not.
+const DAY_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+export function parseDayKey(value) {
+  if (typeof value !== "string" || !DAY_KEY_PATTERN.test(value)) return null;
+  const parsed = new Date(`${value}T00:00:00Z`);
+  if (Number.isNaN(parsed.getTime())) return null;
+  // Round-trips only if the date exists; JS rolls 02-31 forward to 03-03.
+  return parsed.toISOString().slice(0, 10) === value ? value : null;
+}

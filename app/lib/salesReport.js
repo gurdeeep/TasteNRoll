@@ -19,7 +19,11 @@ export function buildItemCategoryMap() {
 }
 
 // Generate daily report grouped by menu sections
-export function generateReport(orders, dateLabel) {
+// `reportTitle` names the period in the heading. It defaults to "Daily Report"
+// because that is what the nightly cron sends; the dashboard passes "Sales
+// Report" when the owner has asked for a week or a month, so a month of takings
+// is never printed under a heading that says Daily.
+export function generateReport(orders, dateLabel, reportTitle = "Daily Report") {
   // Payment breakdown
   const cashOrders = orders.filter((o) => o.payment_method === "Cash");
   const upiOrders = orders.filter((o) => o.payment_method === "UPI");
@@ -68,7 +72,7 @@ export function generateReport(orders, dateLabel) {
   const totalItemsSold = sortedSections.reduce((s, [, sec]) => s + sec.totalQty, 0);
 
   // Build text report
-  let text = `📊 *TASTE N' ROLLS — Daily Report*\n`;
+  let text = `📊 *TASTE N' ROLLS — ${reportTitle}*\n`;
   text += `📅 ${dateLabel}\n`;
   text += `━━━━━━━━━━━━━━━━━━━━━\n\n`;
 
